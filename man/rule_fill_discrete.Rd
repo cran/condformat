@@ -5,12 +5,12 @@
 \alias{rule_fill_discrete_}
 \title{Fill column with discrete colors}
 \usage{
-rule_fill_discrete(..., expression, colours, na.value = "blank", h = c(0,
+rule_fill_discrete(..., expression, colours, na.value = "#FFFFFF", h = c(0,
   360) + 15, c = 100, l = 65, h.start = 0, direction = 1,
   lockcells = FALSE)
 
 rule_fill_discrete_(columns, expression, colours, h = c(0, 360) + 15,
-  c = 100, l = 65, h.start = 0, direction = 1, na.value = "blank",
+  c = 100, l = 65, h.start = 0, direction = 1, na.value = "#FFFFFF",
   lockcells = FALSE, env = parent.frame())
 }
 \arguments{
@@ -58,9 +58,8 @@ data(iris)
 condformat(iris[c(1:5, 70:75, 120:125), ]) +
  rule_fill_discrete(Species, colours = c("setosa" = "red",
                                          "versicolor" = "blue",
-                                         "virginica" = "green"))
-condformat(iris[c(1:5, 70:75, 120:125), ]) +
- rule_fill_discrete(Species, expression=Sepal.Length > 4.6,
+                                         "virginica" = "green")) +
+ rule_fill_discrete(Sepal.Length, expression=Sepal.Length > 4.6,
                     colours=c("TRUE"="red"))
 data(iris)
 condformat(iris) + rule_fill_discrete_(columns=c("Species"))

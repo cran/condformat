@@ -1,18 +1,29 @@
-condformat provides an HTML representation of a data frame in which
-cells in columns are formatted according to several rules or criteria.
+Introduction to condformat
+================
+Sergio Oller
+2016-06-27
 
-[![Build
-Status](https://travis-ci.org/zeehio/condformat.svg?branch=master)](https://travis-ci.org/zeehio/condformat)
-[![codecov.io](https://codecov.io/github/zeehio/condformat/coverage.svg?branch=master)](https://codecov.io/github/zeehio/condformat)
+condformat renders a data frame in which cells in columns are formatted according to several rules or criteria.
+
+[![Downloads](http://cranlogs.r-pkg.org/badges/condformat)](https://cran.r-project.org/package=condformat) [![Build Status](https://travis-ci.org/zeehio/condformat.svg?branch=master)](https://travis-ci.org/zeehio/condformat) [![codecov.io](https://codecov.io/github/zeehio/condformat/coverage.svg?branch=master)](https://codecov.io/github/zeehio/condformat)
 
 Browse source code
 ------------------
 
-Checkout the code and browse it at
-<http://github.com/zeehio/condformat>.
+Checkout the code and browse it at <http://github.com/zeehio/condformat>.
 
 How to install condformat:
 --------------------------
+
+### Dependencies
+
+If you want to use the PDF output you will need the `xcolor` LaTeX package. Either use the full texlive distribution, or install `latex-xcolor` on Debian and derivatives.
+
+### Package installation
+
+-   From CRAN:
+
+        install.packages("condformat")
 
 -   To install the latest development version:
 
@@ -21,17 +32,18 @@ How to install condformat:
 Example
 -------
 
-The example is properly formatted at
-<http://zeehio.github.io/condformat>.
+The example is properly formatted at <http://zeehio.github.io/condformat>.
 
-    data(iris)
-    library(condformat)
-    condformat(iris[c(1:5,70:75, 120:125),]) +
-      rule_fill_discrete(Species) + 
-      rule_fill_discrete(Sepal.Width, Sepal.Length,
-                         expression = Sepal.Width > Sepal.Length - 2.25,
-                         colours = c("TRUE" = "#7D00FF")) + 
-      rule_fill_gradient2(Petal.Length)
+``` r
+data(iris)
+library(condformat)
+condformat(iris[c(1:5,70:75, 120:125),]) +
+  rule_fill_discrete(Species) + 
+  rule_fill_discrete(Sepal.Width, Sepal.Length,
+                     expression = Sepal.Width > Sepal.Length - 2.25,
+                     colours = c("TRUE" = "#7D00FF")) + 
+  rule_fill_gradient2(Petal.Length)
+```
 
 <table class="gmisc_table" style="border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;">
 <thead>
@@ -160,10 +172,10 @@ setosa
 <td style="text-align: left;">
 6
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 5.6
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 2.5
 </td>
 <td style="; background-color: #E7CAC6; text-align: center;">
@@ -180,10 +192,10 @@ versicolor
 <td style="text-align: left;">
 7
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 5.9
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 3.2
 </td>
 <td style="; background-color: #F9F9FC; text-align: center;">
@@ -200,10 +212,10 @@ versicolor
 <td style="text-align: left;">
 8
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 6.1
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 2.8
 </td>
 <td style="; background-color: #EAD0CD; text-align: center;">
@@ -220,10 +232,10 @@ versicolor
 <td style="text-align: left;">
 9
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 6.3
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 2.5
 </td>
 <td style="; background-color: #F4F2F9; text-align: center;">
@@ -240,10 +252,10 @@ versicolor
 <td style="text-align: left;">
 10
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 6.1
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 2.8
 </td>
 <td style="; background-color: #FFFFFF; text-align: center;">
@@ -260,10 +272,10 @@ versicolor
 <td style="text-align: left;">
 11
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 6.4
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 2.9
 </td>
 <td style="; background-color: #F3E4E2; text-align: center;">
@@ -280,10 +292,10 @@ versicolor
 <td style="text-align: left;">
 12
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 6.0
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 2.2
 </td>
 <td style="; background-color: #EEECF6; text-align: center;">
@@ -300,10 +312,10 @@ virginica
 <td style="text-align: left;">
 13
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 6.9
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 3.2
 </td>
 <td style="; background-color: #C8C1E1; text-align: center;">
@@ -320,10 +332,10 @@ virginica
 <td style="text-align: left;">
 14
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 5.6
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 2.8
 </td>
 <td style="; background-color: #F4F2F9; text-align: center;">
@@ -340,10 +352,10 @@ virginica
 <td style="text-align: left;">
 15
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 7.7
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 2.8
 </td>
 <td style="; background-color: #9085C3; text-align: center;">
@@ -360,10 +372,10 @@ virginica
 <td style="text-align: left;">
 16
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 6.3
 </td>
-<td style="; background-color: blank; text-align: center;">
+<td style="; background-color: #FFFFFF; text-align: center;">
 2.7
 </td>
 <td style="; background-color: #F4F2F9; text-align: center;">
@@ -380,10 +392,10 @@ virginica
 <td style="border-bottom: 2px solid grey; text-align: left;">
 17
 </td>
-<td style="; background-color: blank; border-bottom: 2px solid grey; text-align: center;">
+<td style="; background-color: #FFFFFF; border-bottom: 2px solid grey; text-align: center;">
 6.7
 </td>
-<td style="; background-color: blank; border-bottom: 2px solid grey; text-align: center;">
+<td style="; background-color: #FFFFFF; border-bottom: 2px solid grey; text-align: center;">
 3.3
 </td>
 <td style="; background-color: #C8C1E1; border-bottom: 2px solid grey; text-align: center;">
