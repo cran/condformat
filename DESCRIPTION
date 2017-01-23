@@ -1,8 +1,8 @@
 Package: condformat
 Type: Package
 Title: Conditional Formatting in Data Frames
-Version: 0.4.0
-Date: 2016-06-27
+Version: 0.5.0
+Date: 2017-01-23
 Authors@R: person("Sergio", c("Oller", "Moreno"),
                   email = "sergioller@gmail.com", role = c("aut", "cph", "cre"))
 URL: http://github.com/zeehio/condformat
@@ -18,14 +18,13 @@ Description: Apply and visualize conditional formatting to data frames in R.
 License: BSD_3_clause + file LICENSE
 LazyData: TRUE
 NeedsCompilation: no
-Depends: xlsx
-Imports: htmlTable, scales, dplyr, assertthat, lazyeval, knitr,
-        rmarkdown (>= 0.9.6), gplots
-Suggests: testthat (>= 1.0)
+Imports: htmlTable, scales, dplyr, lazyeval (>= 0.2.0), knitr,
+        rmarkdown (>= 0.9.6), gplots, utils
+Suggests: shiny, testthat (>= 1.0), xlsx (>= 0.5.7), rJava
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
-Packaged: 2016-07-25 11:46:26 UTC; sergio
+Packaged: 2017-01-23 15:59:24 UTC; soller
 Author: Sergio Oller Moreno [aut, cph, cre]
 Maintainer: Sergio Oller Moreno <sergioller@gmail.com>
 Repository: CRAN
-Date/Publication: 2016-07-25 19:57:06
+Date/Publication: 2017-01-23 21:18:26

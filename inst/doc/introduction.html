@@ -12,7 +12,7 @@
 
 <meta name="author" content="Sergio Oller" />
 
-<meta name="date" content="2016-07-25" />
+<meta name="date" content="2017-01-23" />
 
 <title>Introduction to condformat</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Introduction to condformat</h1>
 <h4 class="author"><em>Sergio Oller</em></h4>
-<h4 class="date"><em>2016-07-25</em></h4>
+<h4 class="date"><em>2017-01-23</em></h4>
 
 
 
@@ -87,11 +87,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="example" class="section level2">
 <h2>Example:</h2>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(iris)
-<span class="kw">library</span>(condformat)</code></pre></div>
-<pre><code>## Loading required package: xlsx</code></pre>
-<pre><code>## Loading required package: rJava</code></pre>
-<pre><code>## Loading required package: xlsxjars</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">condformat</span>(iris[<span class="kw">c</span>(<span class="dv">1</span>:<span class="dv">5</span>,<span class="dv">70</span>:<span class="dv">75</span>, <span class="dv">120</span>:<span class="dv">125</span>),]) +
+<span class="kw">library</span>(condformat)
+<span class="kw">condformat</span>(iris[<span class="kw">c</span>(<span class="dv">1</span>:<span class="dv">5</span>,<span class="dv">70</span>:<span class="dv">75</span>, <span class="dv">120</span>:<span class="dv">125</span>),]) +
 <span class="st">  </span><span class="kw">rule_fill_discrete</span>(Species) +<span class="st"> </span>
 <span class="st">  </span><span class="kw">rule_fill_discrete</span>(Sepal.Width, Sepal.Length,
                      <span class="dt">expression =</span> Sepal.Width &gt;<span class="st"> </span>Sepal.Length -<span class="st"> </span><span class="fl">2.25</span>,

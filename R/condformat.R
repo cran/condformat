@@ -14,7 +14,6 @@
 #'
 #'         The condformat_tbl print method generates an htmlTable, to be
 #'         viewed using RStudio Viewer or an HTML browser, as available.
-#' @importFrom dplyr tbl_df
 #' @examples
 #' data(iris)
 #' condformat(iris[1:5,])
@@ -44,7 +43,7 @@ condformat <- function(x) {
 #' @return x, with extended condformat_tbl attributes
 #' @examples
 #' data(iris)
-#' condformat(iris) + show_columns(Species)
+#' condformat(iris[1:5,]) + show_columns(Species)
 #' @method + condformat_tbl
 #' @export
 "+.condformat_tbl" <- function(x, obj) {
@@ -72,3 +71,7 @@ condformat <- function(x) {
     NextMethod()
   }
 }
+
+#' @importFrom lazyeval uq
+#' @export
+lazyeval::uq

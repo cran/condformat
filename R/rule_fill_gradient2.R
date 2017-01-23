@@ -1,17 +1,16 @@
 #' Fill column with divergent colour gradient
 #'
 #' Fills the background color of a column using a three colors gradient based on
-#' the values by an expression
+#' the values of an expression
 #'
 #' @family rule
 #'
 #' @param ... Comma separated list of unquoted column names.
-#'            If expression is also given, then this list can use any of the
+#'            If \code{expression} is also given, then this list can use any of the
 #'            \code{\link[dplyr]{select}} syntax possibilities.
-#' @param expression An expression to be evaluated with the data frame this rule applies to.
-#'                   It should evaluate to a numeric vector, that will be used
-#'                   to compute the color gradient values.
-#'                   In rule_fill_gradient_, a character string.
+#' @param expression an expression to be evaluated with the data.
+#'                   It should evaluate to a numeric vector,
+#'                   that will be used to determine the colour gradient level.
 #' @inheritParams scales::div_gradient_pal
 #' @param midpoint the value used for the middle color (the median by default)
 #' @param limits range of limits that the gradient should cover
@@ -25,8 +24,6 @@
 #'  rule_fill_gradient2(Sepal.Length) +
 #'  rule_fill_gradient2(Species, expression=Sepal.Length - Sepal.Width)
 #' @export
-#' @importFrom lazyeval lazy_dots lazy
-#' @importFrom scales muted
 rule_fill_gradient2 <- function(...,
                                 expression,
                                 low = scales::muted("red"), mid="white", high = scales::muted("blue"),
@@ -46,63 +43,79 @@ rule_fill_gradient2 <- function(...,
   }
 
   rule <- structure(list(columns = columns, expression = expression,
-                         low = low, mid = mid, high = high, midpoint = midpoint, space = space,
-                         na.value = na.value, limits = limits, lockcells = lockcells),
+                         low = force(low),
+                         mid = force(mid), high = force(high),
+                         midpoint = force(midpoint), space = force(space),
+                         na.value = force(na.value),
+                         limits = force(limits), lockcells = force(lockcells)),
                     class = c("condformat_rule", "rule_fill_gradient2"))
   return(rule)
 }
 
-#' @rdname rule_fill_gradient2
+#' Fill column with divergent colour gradient (standard evaluation)
+#'
+#' Fills the background color of a column using a three colors gradient based on
+#' the values of an expression
 #'
 #' @family rule
-#' @param columns [SE] a character vector with the column names (Only in rule_fill_gradient2_)
-#' @param env [SE] the environment where `expression` is to be evaluated (Only in rule_fill_gradient2_)
+#' @param columns a character vector with the column names or a list with
+#'                dplyr select helpers given as formulas or a combination of both
+#' @param expression a formula to be evaluated with the data that will be used
+#'                   to determine which cells are to be coloured. See the examples
+#'                   to use it programmatically
+#' @inheritParams scales::div_gradient_pal
+#' @inheritParams rule_fill_gradient2
 #' @export
 #' @examples
 #' data(iris)
-#' condformat(iris) + rule_fill_gradient2_(columns=c("Sepal.Length"))
-#' condformat(iris) + rule_fill_gradient2_("Species", expression="Sepal.Length-Sepal.Width")
+#' condformat(iris[1:10,]) + rule_fill_gradient2_(columns=c("Sepal.Length"))
+#' condformat(iris[1:10,]) + rule_fill_gradient2_("Species",
+#'    expression= ~Sepal.Length-Sepal.Width)
+#'
+#' # Use it programmatically
+#' color_column <- function(x, column) {
+#'   condformat(x) +
+#'     rule_fill_gradient2_(column, expression=~ uq(as.name(column)))
+#' }
+#' color_column(iris[c(1,51,101),], "Sepal.Length")
+#'
+
 rule_fill_gradient2_ <- function(columns,
-                                 expression,
-                                 low = scales::muted("red"), mid="white", high = scales::muted("blue"),
+                                 expression=~.,
+                                 low = scales::muted("red"),
+                                 mid="white",
+                                 high = scales::muted("blue"),
                                  midpoint = NA,
                                  space = "Lab",
                                  na.value = "#7F7F7F",
                                  limits = NA,
-                                 lockcells = FALSE,
-                                 env=parent.frame()) {
-  if (missing(expression)) {
-    if (length(columns) > 1) {
-      warning("rule_fill_gradient2_ applied to multiple variables, using the first given variable as expression")
-    }
-    expression <- columns[1]
-  }
-  rule <- structure(list(columns = columns,
-                         expression = expression, env = env,
-                         low = low, mid = mid, high = high,
-                         space = space, na.value = na.value,
-                         midpoint = midpoint,
-                         limits = limits, lockcells = lockcells),
+                                 lockcells = FALSE) {
+  col_expr <- parse_columns_and_expression_(columns, expression)
+  rule <- structure(list(columns = col_expr[["columns"]],
+                         expression = col_expr[["expression"]],
+                         low = force(low),
+                         mid = force(mid), high = force(high),
+                         midpoint = force(midpoint), space = force(space),
+                         na.value = force(na.value),
+                         limits = force(limits), lockcells = force(lockcells)),
                     class = c("condformat_rule", "rule_fill_gradient2_"))
   return(rule)
 }
 
-#' @importFrom dplyr select_vars_
-#' @importFrom lazyeval lazy_eval
 applyrule.rule_fill_gradient2 <- function(rule, finalformat, xfiltered, xview, ...) {
   columns <- dplyr::select_vars_(colnames(xview), rule$columns)
   values_determining_color <- lazyeval::lazy_eval(rule$expression, xfiltered)
+  values_determining_color <- rep(values_determining_color, length.out = nrow(xfiltered))
   rule_fill_gradient2_common(rule, finalformat, xview, columns, values_determining_color)
 }
 
 applyrule.rule_fill_gradient2_ <- function(rule, finalformat, xfiltered, xview, ...) {
-  columns <- rule$columns
-  values_determining_color <- eval(rule$expression, envir = xfiltered, enclos = rule$env)
+  columns <- dplyr::select_vars_(colnames(xview), rule$columns)
+  values_determining_color <- lazyeval::f_eval(f = rule$expression, data = xfiltered)
+  values_determining_color <- rep(values_determining_color, length.out = nrow(xfiltered))
   rule_fill_gradient2_common(rule, finalformat, xview, columns, values_determining_color)
 }
 
-#' @importFrom scales div_gradient_pal rescale
-#' @importFrom assertthat are_equal
 rule_fill_gradient2_common <- function(rule, finalformat, xview,
                                       columns, values_determining_color) {
   if (identical(rule$limits, NA)) {
@@ -123,7 +136,7 @@ rule_fill_gradient2_common <- function(rule, finalformat, xview,
                                          from = limits, mid = midpoint)
 
   colours_for_values <- col_scale(values_rescaled)
-  assertthat::are_equal(length(colours_for_values), nrow(xview))
+  stopifnot(identical(length(colours_for_values), nrow(xview)))
   colours_for_values <- matrix(colours_for_values,
                                nrow = nrow(xview), ncol = ncol(xview), byrow = FALSE)
 

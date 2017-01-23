@@ -5,7 +5,7 @@
 #' @return the value returned by htmlTable
 #' @examples
 #' data(iris)
-#' print(condformat(iris))
+#' print(condformat(iris[1:5,]))
 #' @export
 print.condformat_tbl <- function(x, ...) {
   outfmt <- guess_output_format()
@@ -23,10 +23,9 @@ print.condformat_tbl <- function(x, ...) {
 #'
 #' @param x A condformat_tbl object
 #' @return the htmlTable object
-#' @importFrom htmlTable htmlTable
 #' @examples
 #' data(iris)
-#' print(condformat(iris))
+#' condformat2html(condformat(iris[1:5,]))
 #' @export
 condformat2html <- function(x) {
   finalshow <- render_show_condformat_tbl(x)
@@ -39,20 +38,62 @@ condformat2html <- function(x) {
   colnames(xview) <- names(finalshow$cols)
   themes <- attr(x, "condformat")$themes
   finaltheme <- render_theme_condformat_tbl(themes, xview)
-  thetable <- do.call(htmlTable::htmlTable, c(list(format(xview),
+  thetable <- do.call(htmlTable::htmlTable, c(list(x = format(xview),
                                                    css.cell = finalformat$css_cell),
                                               finaltheme))
   return(thetable)
 }
+
+#' Converts the table to a htmlTableWidget
+#'
+#' @param x A condformat_tbl object
+#' @return the htmlTable widget
+#' @examples
+#' \dontrun{
+#' data(iris)
+#' condformat2widget(condformat(iris[1:5,]))
+#' }
+#' @export
+condformat2widget <- function(x) {
+  if (utils::packageVersion("htmlTable") <= "1.8") {
+    stop("htmlTable>1.8 is required for widget support")
+  }
+  finalshow <- render_show_condformat_tbl(x)
+  xfiltered <- finalshow$xfiltered
+  xview <- xfiltered[, finalshow$cols, drop = FALSE]
+  rules <- attr(x, "condformat")$rules
+  finalformat <- render_rules_condformat_tbl(rules, xfiltered, xview,
+                                             format = "html")
+  # Rename the columns according to show options:
+  colnames(xview) <- names(finalshow$cols)
+  themes <- attr(x, "condformat")$themes
+  finaltheme <- render_theme_condformat_tbl(themes, xview)
+  thewidget <- do.call(what = htmlTable::htmlTableWidget,
+                       args = c(list(x = format(xview),
+                                     css.cell = finalformat$css_cell),
+                                finaltheme))
+  return(thewidget)
+}
+
 
 #' Writes the table to an Excel sheet
 #'
 #' @param x A condformat_tbl object
 #' @param filename The xlsx file name
 #' @export
-#' @importFrom xlsx createWorkbook createSheet addDataFrame saveWorkbook
 #'
 condformat2excel <- function(x, filename) {
+  if (!requireNamespace("xlsx", quietly = TRUE)) {
+    stop("Please install the xlsx package in order to export to excel")
+  }
+  # We need this until https://github.com/dragua/xlsx/pull/76 is merged
+  # We can drop rJava from suggests once this is fixed
+  if (!requireNamespace("rJava", quietly = TRUE)) {
+    stop("Please install the rJava package in order to export to excel")
+  }
+  rJava::.jpackage("xlsx")
+  # Until here
+
   if (!grepl(pattern = '\\.xlsx$', filename)) { # endsWith(filename, ".xlsx")
     filename <- paste0(filename, ".xlsx")
   }
@@ -70,14 +111,15 @@ condformat2excel <- function(x, filename) {
   if ("background-color" %in% names(finalformat$css_fields)) {
     for (i in 1:nrow(xview)) {
       for (j in 1:ncol(xview)) {
-        cb <- xlsx::CellBlock(sheet, startRow = i+1, startColumn = j,
-                              noRows = 1, noColumns = 1, create = FALSE)
-        background_color <- ifelse(finalformat$css_fields$`background-color`[i,j] == "", "white", finalformat$css_fields$`background-color`[i,j])
-        fill <- xlsx::Fill(backgroundColor = background_color, foregroundColor = background_color)
-        xlsx::CB.setFill(cellBlock = cb,
-                         fill = fill,
-                         rowIndex = 1, colIndex = 1)
-        break
+        background_color <- ifelse(finalformat$css_fields$`background-color`[i,j] == "", NA, finalformat$css_fields$`background-color`[i,j])
+        if (!is.na(background_color)) {
+          cb <- xlsx::CellBlock.default(sheet, startRow = i + 1, startColumn = j,
+                                        noRows = 1, noColumns = 1, create = FALSE)
+          fill <- xlsx::Fill(backgroundColor = background_color, foregroundColor = background_color)
+          xlsx::CB.setFill(cellBlock = cb,
+                           fill = fill,
+                           rowIndex = 1, colIndex = 1)
+        }
       }
     }
   }
@@ -89,7 +131,6 @@ condformat2excel <- function(x, filename) {
 #' @param x A condformat_tbl object
 #' @param ... arguments passed to knitr::kable
 #' @return A character vector of the table source code
-#' @importFrom knitr kable
 #' @export
 condformat2latex <- function(x, ...) {
   finalshow <- render_show_condformat_tbl(x)
@@ -108,8 +149,6 @@ condformat2latex <- function(x, ...) {
 }
 
 
-#' @importFrom rmarkdown metadata
-#' @importFrom knitr opts_knit
 guess_output_format <- function() {
   outfmt <- knitr::opts_knit$get("rmarkdown.pandoc.to")
   if (is.null(outfmt)) {
@@ -130,11 +169,8 @@ guess_output_format <- function() {
 #' Print method for knitr, exporting to HTML or LaTeX as needed
 #' @param x Object to print
 #' @param ... Provided for knitr_print compatibility
-#' @importFrom knitr knit_print
-#' @importFrom rmarkdown latex_dependency
-#' @importFrom  knitr asis_output
-#' @importFrom knitr kable
 #'
+#' @importFrom knitr knit_print
 #' @export
 knit_print.condformat_tbl <- function(x, ...) {
   outfmt <- guess_output_format()
@@ -142,7 +178,6 @@ knit_print.condformat_tbl <- function(x, ...) {
     latex_dependencies <- list(rmarkdown::latex_dependency(name = "xcolor",
                                                            options = "table"))
     use_longtable <- knitr::opts_current$get("longtable")
-    print(use_longtable)
     if (is.null(use_longtable) || use_longtable == TRUE) {
       latex_dependencies <- c(latex_dependencies,
                               list(rmarkdown::latex_dependency(name = "longtable")))
@@ -195,7 +230,6 @@ merge_css_conditions <- function(initial_value, css_fields) {
   return(output)
 }
 
-#' @importFrom gplots col2hex
 merge_css_conditions_to_latex <- function(css_fields, raw_text) {
   css_keys <- names(css_fields)
   output <- ""
@@ -291,3 +325,4 @@ render_theme <- function(themeobj, finaltheme, xview, ...) UseMethod("render_the
 render_theme.default <- function(themeobj, finaltheme, xview, ...) {
   finaltheme
 }
+
