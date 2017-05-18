@@ -4,12 +4,14 @@
 \alias{print.condformat_tbl}
 \title{Prints the data frame in an html page and shows it.}
 \usage{
-\method{print}{condformat_tbl}(x, ...)
+\method{print}{condformat_tbl}(x, ..., paginate = TRUE)
 }
 \arguments{
 \item{x}{A condformat_tbl object}
 
 \item{...}{optional arguments to print}
+
+\item{paginate}{A logical value. If TRUE the printing will be paginated}
 }
 \value{
 the value returned by htmlTable
@@ -21,4 +23,3 @@ Prints the data frame in an html page and shows it.
 data(iris)
 print(condformat(iris[1:5,]))
 }
-

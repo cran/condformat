@@ -1,3 +1,13 @@
+condformat 0.6.0
+----------------------------------------------------------------
+
+* Fix tibble formatting issues, causing package malfunction.
+* Bugfix: theme_htmlTable() now accepts the css.cell argument (thanks
+  to 鱼飞灰 for reporting it)
+* Require latest htmlTable. Improve/fix printing of condformat
+
+
+
 condformat 0.5.0
 ----------------------------------------------------------------
 
