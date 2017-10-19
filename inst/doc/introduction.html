@@ -12,7 +12,7 @@
 
 <meta name="author" content="Sergio Oller" />
 
-<meta name="date" content="2017-05-18" />
+<meta name="date" content="2017-10-19" />
 
 <title>Introduction to condformat</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Introduction to condformat</h1>
 <h4 class="author"><em>Sergio Oller</em></h4>
-<h4 class="date"><em>2017-05-18</em></h4>
+<h4 class="date"><em>2017-10-19</em></h4>
 
 
 
@@ -79,21 +79,27 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p><code>condformat</code> prints a data frame with cells formatted according to several rules or criteria. It is integrated with the RStudio Viewer or a web browser, and it supports <code>knitr</code> and <code>rmarkdown</code> outputs using both HTML and PDF (<span class="math inline">\(\LaTeX\)</span>) output formats. Other formats are not supported, although patches to enable them are welcome.</p>
 <div id="basic-syntax" class="section level2">
 <h2>Basic syntax</h2>
-<p>Its syntax should be familiar to <code>ggplot</code> users.</p>
-<pre><code>condformat(a_data_frame) +          # A data frame to print
-  rule_fill_discrete(ColumnA) +     # Add formatting rules to the data frame
+<p>Its syntax should be familiar to <code>ggplot</code> users, with tidy evaluation.</p>
+<pre><code>condformat(a_data_frame) %&gt;%          # A data frame to print
+  rule_fill_discrete(ColumnA) %&gt;%     # Add formatting rules to the data frame
   rule_fill_gradient(ColumnB)</code></pre>
 </div>
 <div id="example" class="section level2">
 <h2>Example:</h2>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(iris)
 <span class="kw">library</span>(condformat)
-<span class="kw">condformat</span>(iris[<span class="kw">c</span>(<span class="dv">1</span>:<span class="dv">5</span>,<span class="dv">70</span>:<span class="dv">75</span>, <span class="dv">120</span>:<span class="dv">125</span>),]) +
-<span class="st">  </span><span class="kw">rule_fill_discrete</span>(Species) +<span class="st"> </span>
-<span class="st">  </span><span class="kw">rule_fill_discrete</span>(Sepal.Width, Sepal.Length,
-                     <span class="dt">expression =</span> Sepal.Width &gt;<span class="st"> </span>Sepal.Length -<span class="st"> </span><span class="fl">2.25</span>,
-                     <span class="dt">colours =</span> <span class="kw">c</span>(<span class="st">&quot;TRUE&quot;</span> =<span class="st"> &quot;#7D00FF&quot;</span>)) +<span class="st"> </span>
-<span class="st">  </span><span class="kw">rule_fill_gradient2</span>(Petal.Length)</code></pre></div>
+<span class="kw">condformat</span>(iris[<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>,<span class="dv">70</span><span class="op">:</span><span class="dv">75</span>, <span class="dv">120</span><span class="op">:</span><span class="dv">125</span>),]) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">rule_fill_discrete</span>(Species) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">rule_fill_discrete</span>(<span class="kw">c</span>(Sepal.Width, Sepal.Length),
+                     <span class="dt">expression =</span> Sepal.Width <span class="op">&gt;</span><span class="st"> </span>Sepal.Length <span class="op">-</span><span class="st"> </span><span class="fl">2.25</span>,
+                     <span class="dt">colours =</span> <span class="kw">c</span>(<span class="st">&quot;TRUE&quot;</span> =<span class="st"> &quot;#7D00FF&quot;</span>)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">rule_fill_gradient2</span>(Petal.Length) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">rule_css</span>(Sepal.Length,
+           <span class="dt">expression =</span> <span class="kw">ifelse</span>(Species <span class="op">==</span><span class="st"> &quot;setosa&quot;</span>, <span class="st">&quot;bold&quot;</span>, <span class="st">&quot;regular&quot;</span>),
+           <span class="dt">css_field =</span> <span class="st">&quot;font-weight&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">rule_css</span>(Sepal.Length,
+           <span class="dt">expression =</span> <span class="kw">ifelse</span>(Species <span class="op">==</span><span class="st"> &quot;setosa&quot;</span>, <span class="st">&quot;yellow&quot;</span>, <span class="st">&quot;black&quot;</span>),
+           <span class="dt">css_field =</span> <span class="st">&quot;color&quot;</span>)</code></pre></div>
 <table class="gmisc_table" style="border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;">
 <thead>
 <tr>
@@ -121,19 +127,19 @@ Species
 <td style="text-align: left;">
 1
 </td>
-<td style="; background-color: #7D00FF; text-align: center;">
+<td style="; background-color: #7D00FF; font-weight: bold; color: yellow; text-align: center;">
 5.1
 </td>
-<td style="; background-color: #7D00FF; text-align: center;">
+<td style="; background-color: #7D00FF; font-weight: ; color:; text-align: center;">
 3.5
 </td>
-<td style="; background-color: #872B29; text-align: center;">
+<td style="; background-color: #872B29; font-weight: ; color:; text-align: center;">
 1.4
 </td>
-<td style="; background-color:; text-align: center;">
+<td style="; background-color: ; font-weight: ; color:; text-align: center;">
 0.2
 </td>
-<td style="; background-color: #F8766D; text-align: center;">
+<td style="; background-color: #F8766D; font-weight: ; color:; text-align: center;">
 setosa
 </td>
 </tr>
@@ -141,19 +147,19 @@ setosa
 <td style="text-align: left;">
 2
 </td>
-<td style="; background-color: #7D00FF; text-align: center;">
+<td style="; background-color: #7D00FF; font-weight: bold; color: yellow; text-align: center;">
 4.9
 </td>
-<td style="; background-color: #7D00FF; text-align: center;">
+<td style="; background-color: #7D00FF; font-weight: ; color:; text-align: center;">
 3.0
 </td>
-<td style="; background-color: #872B29; text-align: center;">
+<td style="; background-color: #872B29; font-weight: ; color:; text-align: center;">
 1.4
 </td>
-<td style="; background-color:; text-align: center;">
+<td style="; background-color: ; font-weight: ; color:; text-align: center;">
 0.2
 </td>
-<td style="; background-color: #F8766D; text-align: center;">
+<td style="; background-color: #F8766D; font-weight: ; color:; text-align: center;">
 setosa
 </td>
 </tr>
@@ -161,19 +167,19 @@ setosa
 <td style="text-align: left;">
 3
 </td>
-<td style="; background-color: #7D00FF; text-align: center;">
+<td style="; background-color: #7D00FF; font-weight: bold; color: yellow; text-align: center;">
 4.7
 </td>
-<td style="; background-color: #7D00FF; text-align: center;">
+<td style="; background-color: #7D00FF; font-weight: ; color:; text-align: center;">
 3.2
 </td>
-<td style="; background-color: #832424; text-align: center;">
+<td style="; background-color: #832424; font-weight: ; color:; text-align: center;">
 1.3
 </td>
-<td style="; background-color:; text-align: center;">
+<td style="; background-color: ; font-weight: ; color:; text-align: center;">
 0.2
 </td>
-<td style="; background-color: #F8766D; text-align: center;">
+<td style="; background-color: #F8766D; font-weight: ; color:; text-align: center;">
 setosa
 </td>
 </tr>
@@ -181,19 +187,19 @@ setosa
 <td style="text-align: left;">
 4
 </td>
-<td style="; background-color: #7D00FF; text-align: center;">
+<td style="; background-color: #7D00FF; font-weight: bold; color: yellow; text-align: center;">
 4.6
 </td>
-<td style="; background-color: #7D00FF; text-align: center;">
+<td style="; background-color: #7D00FF; font-weight: ; color:; text-align: center;">
 3.1
 </td>
-<td style="; background-color: #8C322F; text-align: center;">
+<td style="; background-color: #8C322F; font-weight: ; color:; text-align: center;">
 1.5
 </td>
-<td style="; background-color:; text-align: center;">
+<td style="; background-color: ; font-weight: ; color:; text-align: center;">
 0.2
 </td>
-<td style="; background-color: #F8766D; text-align: center;">
+<td style="; background-color: #F8766D; font-weight: ; color:; text-align: center;">
 setosa
 </td>
 </tr>
@@ -201,19 +207,19 @@ setosa
 <td style="text-align: left;">
 5
 </td>
-<td style="; background-color: #7D00FF; text-align: center;">
+<td style="; background-color: #7D00FF; font-weight: bold; color: yellow; text-align: center;">
 5.0
 </td>
-<td style="; background-color: #7D00FF; text-align: center;">
+<td style="; background-color: #7D00FF; font-weight: ; color:; text-align: center;">
 3.6
 </td>
-<td style="; background-color: #872B29; text-align: center;">
+<td style="; background-color: #872B29; font-weight: ; color:; text-align: center;">
 1.4
 </td>
-<td style="; background-color:; text-align: center;">
+<td style="; background-color: ; font-weight: ; color:; text-align: center;">
 0.2
 </td>
-<td style="; background-color: #F8766D; text-align: center;">
+<td style="; background-color: #F8766D; font-weight: ; color:; text-align: center;">
 setosa
 </td>
 </tr>
@@ -221,19 +227,19 @@ setosa
 <td style="text-align: left;">
 6
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: regular; color: black; text-align: center;">
 5.6
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: ; color:; text-align: center;">
 2.5
 </td>
-<td style="; background-color: #E7CAC6; text-align: center;">
+<td style="; background-color: #E7CAC6; font-weight: ; color:; text-align: center;">
 3.9
 </td>
-<td style="; background-color:; text-align: center;">
+<td style="; background-color: ; font-weight: ; color:; text-align: center;">
 1.1
 </td>
-<td style="; background-color: #00BA38; text-align: center;">
+<td style="; background-color: #00BA38; font-weight: ; color:; text-align: center;">
 versicolor
 </td>
 </tr>
@@ -241,19 +247,19 @@ versicolor
 <td style="text-align: left;">
 7
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: regular; color: black; text-align: center;">
 5.9
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: ; color:; text-align: center;">
 3.2
 </td>
-<td style="; background-color: #F9F9FC; text-align: center;">
+<td style="; background-color: #F9F9FC; font-weight: ; color:; text-align: center;">
 4.8
 </td>
-<td style="; background-color:; text-align: center;">
+<td style="; background-color: ; font-weight: ; color:; text-align: center;">
 1.8
 </td>
-<td style="; background-color: #00BA38; text-align: center;">
+<td style="; background-color: #00BA38; font-weight: ; color:; text-align: center;">
 versicolor
 </td>
 </tr>
@@ -261,19 +267,19 @@ versicolor
 <td style="text-align: left;">
 8
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: regular; color: black; text-align: center;">
 6.1
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: ; color:; text-align: center;">
 2.8
 </td>
-<td style="; background-color: #EAD0CD; text-align: center;">
+<td style="; background-color: #EAD0CD; font-weight: ; color:; text-align: center;">
 4.0
 </td>
-<td style="; background-color:; text-align: center;">
+<td style="; background-color: ; font-weight: ; color:; text-align: center;">
 1.3
 </td>
-<td style="; background-color: #00BA38; text-align: center;">
+<td style="; background-color: #00BA38; font-weight: ; color:; text-align: center;">
 versicolor
 </td>
 </tr>
@@ -281,19 +287,19 @@ versicolor
 <td style="text-align: left;">
 9
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: regular; color: black; text-align: center;">
 6.3
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: ; color:; text-align: center;">
 2.5
 </td>
-<td style="; background-color: #F4F2F9; text-align: center;">
+<td style="; background-color: #F4F2F9; font-weight: ; color:; text-align: center;">
 4.9
 </td>
-<td style="; background-color:; text-align: center;">
+<td style="; background-color: ; font-weight: ; color:; text-align: center;">
 1.5
 </td>
-<td style="; background-color: #00BA38; text-align: center;">
+<td style="; background-color: #00BA38; font-weight: ; color:; text-align: center;">
 versicolor
 </td>
 </tr>
@@ -301,19 +307,19 @@ versicolor
 <td style="text-align: left;">
 10
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: regular; color: black; text-align: center;">
 6.1
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: ; color:; text-align: center;">
 2.8
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: ; color:; text-align: center;">
 4.7
 </td>
-<td style="; background-color:; text-align: center;">
+<td style="; background-color: ; font-weight: ; color:; text-align: center;">
 1.2
 </td>
-<td style="; background-color: #00BA38; text-align: center;">
+<td style="; background-color: #00BA38; font-weight: ; color:; text-align: center;">
 versicolor
 </td>
 </tr>
@@ -321,19 +327,19 @@ versicolor
 <td style="text-align: left;">
 11
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: regular; color: black; text-align: center;">
 6.4
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: ; color:; text-align: center;">
 2.9
 </td>
-<td style="; background-color: #F3E4E2; text-align: center;">
+<td style="; background-color: #F3E4E2; font-weight: ; color:; text-align: center;">
 4.3
 </td>
-<td style="; background-color:; text-align: center;">
+<td style="; background-color: ; font-weight: ; color:; text-align: center;">
 1.3
 </td>
-<td style="; background-color: #00BA38; text-align: center;">
+<td style="; background-color: #00BA38; font-weight: ; color:; text-align: center;">
 versicolor
 </td>
 </tr>
@@ -341,19 +347,19 @@ versicolor
 <td style="text-align: left;">
 12
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: regular; color: black; text-align: center;">
 6.0
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: ; color:; text-align: center;">
 2.2
 </td>
-<td style="; background-color: #EEECF6; text-align: center;">
+<td style="; background-color: #EEECF6; font-weight: ; color:; text-align: center;">
 5.0
 </td>
-<td style="; background-color:; text-align: center;">
+<td style="; background-color: ; font-weight: ; color:; text-align: center;">
 1.5
 </td>
-<td style="; background-color: #619CFF; text-align: center;">
+<td style="; background-color: #619CFF; font-weight: ; color:; text-align: center;">
 virginica
 </td>
 </tr>
@@ -361,19 +367,19 @@ virginica
 <td style="text-align: left;">
 13
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: regular; color: black; text-align: center;">
 6.9
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: ; color:; text-align: center;">
 3.2
 </td>
-<td style="; background-color: #C8C1E1; text-align: center;">
+<td style="; background-color: #C8C1E1; font-weight: ; color:; text-align: center;">
 5.7
 </td>
-<td style="; background-color:; text-align: center;">
+<td style="; background-color: ; font-weight: ; color:; text-align: center;">
 2.3
 </td>
-<td style="; background-color: #619CFF; text-align: center;">
+<td style="; background-color: #619CFF; font-weight: ; color:; text-align: center;">
 virginica
 </td>
 </tr>
@@ -381,19 +387,19 @@ virginica
 <td style="text-align: left;">
 14
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: regular; color: black; text-align: center;">
 5.6
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: ; color:; text-align: center;">
 2.8
 </td>
-<td style="; background-color: #F4F2F9; text-align: center;">
+<td style="; background-color: #F4F2F9; font-weight: ; color:; text-align: center;">
 4.9
 </td>
-<td style="; background-color:; text-align: center;">
+<td style="; background-color: ; font-weight: ; color:; text-align: center;">
 2.0
 </td>
-<td style="; background-color: #619CFF; text-align: center;">
+<td style="; background-color: #619CFF; font-weight: ; color:; text-align: center;">
 virginica
 </td>
 </tr>
@@ -401,19 +407,19 @@ virginica
 <td style="text-align: left;">
 15
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: regular; color: black; text-align: center;">
 7.7
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: ; color:; text-align: center;">
 2.8
 </td>
-<td style="; background-color: #9085C3; text-align: center;">
+<td style="; background-color: #9085C3; font-weight: ; color:; text-align: center;">
 6.7
 </td>
-<td style="; background-color:; text-align: center;">
+<td style="; background-color: ; font-weight: ; color:; text-align: center;">
 2.0
 </td>
-<td style="; background-color: #619CFF; text-align: center;">
+<td style="; background-color: #619CFF; font-weight: ; color:; text-align: center;">
 virginica
 </td>
 </tr>
@@ -421,19 +427,19 @@ virginica
 <td style="text-align: left;">
 16
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: regular; color: black; text-align: center;">
 6.3
 </td>
-<td style="; background-color: #FFFFFF; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: ; color:; text-align: center;">
 2.7
 </td>
-<td style="; background-color: #F4F2F9; text-align: center;">
+<td style="; background-color: #F4F2F9; font-weight: ; color:; text-align: center;">
 4.9
 </td>
-<td style="; background-color:; text-align: center;">
+<td style="; background-color: ; font-weight: ; color:; text-align: center;">
 1.8
 </td>
-<td style="; background-color: #619CFF; text-align: center;">
+<td style="; background-color: #619CFF; font-weight: ; color:; text-align: center;">
 virginica
 </td>
 </tr>
@@ -441,19 +447,19 @@ virginica
 <td style="border-bottom: 2px solid grey; text-align: left;">
 17
 </td>
-<td style="; background-color: #FFFFFF; border-bottom: 2px solid grey; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: regular; color: black; border-bottom: 2px solid grey; text-align: center;">
 6.7
 </td>
-<td style="; background-color: #FFFFFF; border-bottom: 2px solid grey; text-align: center;">
+<td style="; background-color: #FFFFFF; font-weight: ; color:; border-bottom: 2px solid grey; text-align: center;">
 3.3
 </td>
-<td style="; background-color: #C8C1E1; border-bottom: 2px solid grey; text-align: center;">
+<td style="; background-color: #C8C1E1; font-weight: ; color:; border-bottom: 2px solid grey; text-align: center;">
 5.7
 </td>
-<td style="; background-color:; border-bottom: 2px solid grey; text-align: center;">
+<td style="; background-color: ; font-weight: ; color:; border-bottom: 2px solid grey; text-align: center;">
 2.1
 </td>
-<td style="; background-color: #619CFF; border-bottom: 2px solid grey; text-align: center;">
+<td style="; background-color: #619CFF; font-weight: ; color:; border-bottom: 2px solid grey; text-align: center;">
 virginica
 </td>
 </tr>

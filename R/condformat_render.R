@@ -83,26 +83,82 @@ condformat2widget <- function(x, ...) {
 }
 
 
-#' Writes the table to an Excel sheet
-#'
-#' @param x A condformat_tbl object
-#' @param filename The xlsx file name
-#' @export
-#'
-condformat2excel <- function(x, filename) {
+require_xlsx <- function() {
   if (!requireNamespace("xlsx", quietly = TRUE)) {
     stop("Please install the xlsx package in order to export to excel")
   }
-  # We need this until https://github.com/dragua/xlsx/pull/76 is merged
+  # We need this until https://github.com/dragua/xlsx/pull/76 is released
   # We can drop rJava from suggests once this is fixed
   if (!requireNamespace("rJava", quietly = TRUE)) {
     stop("Please install the rJava package in order to export to excel")
   }
   rJava::.jpackage("xlsx")
   # Until here
+}
+
+#' Writes the table to an Excel workbook
+#'
+#' @param x A condformat_tbl object
+#' @param filename The xlsx file name.
+#' @param sheet_name The name of the sheet where the table will be written
+#' @param overwrite_wb logical to overwrite the workbook file
+#' @param overwrite_sheet logical to overwrite the sheet
+#' @export
+#'
+condformat2excel <- function(x, filename, sheet_name = "Sheet1",
+                             overwrite_wb = FALSE,
+                             overwrite_sheet = TRUE) {
+  require_xlsx()
 
   if (!grepl(pattern = '\\.xlsx$', filename)) { # endsWith(filename, ".xlsx")
     filename <- paste0(filename, ".xlsx")
+  }
+
+  if (file.exists(filename) && identical(overwrite_wb, FALSE)) {
+    wb <- xlsx::loadWorkbook(filename)
+  } else {
+    wb <- xlsx::createWorkbook(type = "xlsx")
+  }
+
+  # getSheets cat's a message I don't want nor care about.
+  noSheets <- wb$getNumberOfSheets()
+  if (noSheets > 0) {
+    sheet_list <- xlsx::getSheets(wb)
+  } else {
+    sheet_list <- list()
+  }
+  if (sheet_name %in% names(sheet_list)) {
+    if (overwrite_sheet) {
+      xlsx::removeSheet(wb = wb, sheetName = sheet_name)
+      sheet <- xlsx::createSheet(wb, sheetName = sheet_name)
+    } else {
+      sheet <- sheet_list[[sheet_name]]
+    }
+  } else {
+    sheet <- xlsx::createSheet(wb, sheetName = sheet_name)
+  }
+  condformat2excelsheet(x, sheet)
+  xlsx::saveWorkbook(wb, file = filename)
+  return(invisible(x))
+}
+
+# Writes the table to an Excel sheet
+#
+# @param x A condformat_tbl object
+# @param sheet The sheet object
+# @examples
+# \dontrun{
+# x <- condformat(iris[1:5,])
+# library(xlsx)
+# wb <- xlsx::createWorkbook(type = "xlsx")
+# sheet <- xlsx::createSheet(wb, sheetName = "Sheet1")
+# condformat2excelsheet(x, sheet)
+# xlsx::saveWorkbook(wb, file = "iris.xlsx")
+# }
+condformat2excelsheet <- function(x, sheet) {
+  require_xlsx()
+  if (!"jobjRef" %in% class(sheet)) {
+    stop("sheet must be an jobjRef object, as the one returned with xls::createSheet()")
   }
   finalshow <- render_show_condformat_tbl(x)
   xfiltered <- finalshow$xfiltered
@@ -110,14 +166,12 @@ condformat2excel <- function(x, filename) {
   rules <- attr(x, "condformat")$rules
   finalformat <- render_rules_condformat_tbl(rules, xfiltered, xview,
                                              format = "excel")
-  wb <- xlsx::createWorkbook(type = "xlsx")
-  sheet <- xlsx::createSheet(wb, sheetName = "Sheet1")
 
   xlsx::addDataFrame(x = as.data.frame(xview),
                      sheet = sheet, row.names = F, col.names = T)
   if ("background-color" %in% names(finalformat$css_fields)) {
-    for (i in 1:nrow(xview)) {
-      for (j in 1:ncol(xview)) {
+    for (i in seq_len(nrow(xview))) {
+      for (j in seq_len(ncol(xview))) {
         background_color <- ifelse(finalformat$css_fields$`background-color`[i,j] == "", NA, finalformat$css_fields$`background-color`[i,j])
         if (!is.na(background_color)) {
           cb <- xlsx::CellBlock.default(sheet, startRow = i + 1, startColumn = j,
@@ -130,8 +184,7 @@ condformat2excel <- function(x, filename) {
       }
     }
   }
-  xlsx::saveWorkbook(wb, file = filename)
-  return(invisible(x))
+  invisible(x)
 }
 
 #' Converts the table to LaTeX code
@@ -196,7 +249,7 @@ knit_print.condformat_tbl <- function(x, ...) {
 
     return(knitr::asis_output(condformat2html(x)))
   } else {
-    warning("knitr format not supported by condformat")
+    warning("knitr format '", outfmt, "' not supported by condformat")
     return(knitr::knit_print(knitr::kable(x), ...))
   }
 }
@@ -303,7 +356,7 @@ render_rules_condformat_tbl <- function(rules, xfiltered, xview, format) {
     }
     return(finalformat)
   } else if (format == "latex") {
-    raw_text <- escape_latex(as.matrix(format(xview)))
+    raw_text <- escape_latex(as.matrix(format.data.frame(xview)))
     # Need to wrap raw_text with formatting rules
     formatted_text <- merge_css_conditions_to_latex(css_fields = finalformat$css_fields, raw_text = raw_text)
     return(formatted_text)

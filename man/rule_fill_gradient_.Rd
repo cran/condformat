@@ -2,7 +2,7 @@
 % Please edit documentation in R/rule_fill_gradient.R
 \name{rule_fill_gradient_}
 \alias{rule_fill_gradient_}
-\title{Fill column with sequential colour gradient (standard evaluation)}
+\title{Fill column with sequential colour gradient (deprecated)}
 \usage{
 rule_fill_gradient_(columns, expression = ~., low = "#132B43",
   high = "#56B1F7", space = "Lab", na.value = "#7F7F7F", limits = NA,
@@ -46,11 +46,4 @@ gradient_color_column1_minus_column2 <- function(x, column_to_paint, column1, co
 }
 ex2 <- gradient_color_column1_minus_column2(iris[1:5,], "Species", "Sepal.Length", "Sepal.Width")
 stopifnot(ex1 == ex2)
-}
-\seealso{
-Other rule: \code{\link{rule_fill_discrete_}},
-  \code{\link{rule_fill_discrete}},
-  \code{\link{rule_fill_gradient2_}},
-  \code{\link{rule_fill_gradient2}},
-  \code{\link{rule_fill_gradient}}
 }

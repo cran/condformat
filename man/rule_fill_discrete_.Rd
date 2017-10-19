@@ -2,7 +2,7 @@
 % Please edit documentation in R/rule_fill_discrete.R
 \name{rule_fill_discrete_}
 \alias{rule_fill_discrete_}
-\title{Fill column with discrete colors (standard evaluation)}
+\title{Fill column with discrete colors (deprecated)}
 \usage{
 rule_fill_discrete_(columns, expression = ~., colours = NA, h = c(0, 360)
   + 15, c = 100, l = 65, h.start = 0, direction = 1,
@@ -36,7 +36,7 @@ combination of hue and luminance.}
 \item{lockcells}{logical value determining if no further rules should be applied to the affected cells.}
 }
 \description{
-Fill column with discrete colors (standard evaluation)
+This is a deprecated function
 }
 \examples{
 data(iris)
@@ -74,11 +74,4 @@ color_pick <- function(column) {
 condformat(head(iris)) +
    rule_fill_discrete_("Sepal.Length", ~ color_pick(Sepal.Length), colours = identity)
 
-}
-\seealso{
-Other rule: \code{\link{rule_fill_discrete}},
-  \code{\link{rule_fill_gradient2_}},
-  \code{\link{rule_fill_gradient2}},
-  \code{\link{rule_fill_gradient_}},
-  \code{\link{rule_fill_gradient}}
 }
