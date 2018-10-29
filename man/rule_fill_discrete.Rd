@@ -2,22 +2,17 @@
 % Please edit documentation in R/rule_fill_discrete.R
 \name{rule_fill_discrete}
 \alias{rule_fill_discrete}
-\alias{rule_fill_discrete_new}
 \title{Fill column with discrete colors}
 \usage{
-rule_fill_discrete(...)
-
-rule_fill_discrete_new(x, columns, expression, colours = NA,
+rule_fill_discrete(x, columns, expression, colours = NA,
   na.value = "#FFFFFF", h = c(0, 360) + 15, c = 100, l = 65,
-  h.start = 0, direction = 1, lockcells = FALSE)
+  h.start = 0, direction = 1, lockcells = FALSE, ...)
 }
 \arguments{
-\item{...}{Dots are used to transition from the old syntax \code{\link{rule_fill_discrete_old}} to the new one}
-
-\item{x}{A condformat object, typically created with `condformat(x)`}
+\item{x}{A condformat object, typically created with \code{\link[=condformat]{condformat()}}}
 
 \item{columns}{A character vector with column names to be coloured. Optionally
-`tidyselect::select_helpers` can be used.}
+\code{\link[tidyselect:select_helpers]{tidyselect::select_helpers()}} can be used.}
 
 \item{expression}{an expression to be evaluated with the data.
 It should evaluate to a logical or an integer vector,
@@ -41,6 +36,8 @@ combination of hue and luminance.}
 1 = clockwise, -1 = counter-clockwise}
 
 \item{lockcells}{logical value determining if no further rules should be applied to the affected cells.}
+
+\item{...}{Dots are used to transition from the old syntax \code{\link[=rule_fill_discrete_old]{rule_fill_discrete_old()}} to the new one}
 }
 \value{
 The condformat_tbl object, with the added formatting information
@@ -50,7 +47,7 @@ Fills a column or columns of a data frame using a discrete
 colour palette, based on an expression.
 }
 \details{
-The syntax in condformat rules has changed since v0.7. See \code{\link{rule_fill_discrete_old}}
+The syntax in condformat rules has changed since v0.7. See \code{\link[=rule_fill_discrete_old]{rule_fill_discrete_old()}}
 }
 \examples{
 data(iris)
@@ -68,6 +65,10 @@ condformat(iris[c(1:5, 70:75, 120:125), ]) \%>\%
 }
 \seealso{
 Other rule: \code{\link{rule_css}},
+  \code{\link{rule_fill_bar}},
   \code{\link{rule_fill_gradient2}},
-  \code{\link{rule_fill_gradient}}
+  \code{\link{rule_fill_gradient}},
+  \code{\link{rule_text_bold}},
+  \code{\link{rule_text_color}}
 }
+\concept{rule}

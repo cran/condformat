@@ -4,11 +4,11 @@
 #' Compared to \code{\link[dplyr]{select}}, show_columns does not remove the
 #' columns from the data frame, so formatting rules can still depend
 #' on them.
-#' @param x A condformat object, typically created with `condformat(x)`
-#' @param columns A character vector with column names to be coloured. It can also be an expression
-#'                can be used that will be parsed like in `tidyselect::vars_select`. See examples.
+#' @param x A condformat object, typically created with [condformat()]
+#' @param columns A character vector with column names to be to show. It can also be an expression
+#'                can be used that will be parsed like in [tidyselect::vars_select()]. See examples.
 #' @param col_names Character vector with the column names for the selected columns
-#' @param ... Dots are used to transition from the old syntax \code{\link{show_columns_old}} to the new one
+#' @param ... Dots are used to transition from the old syntax [show_columns_old()] to the new one
 #'
 #' @return The condformat object with the rule added
 #' @examples
@@ -35,28 +35,15 @@
 #'
 #' @export
 #' @seealso \code{\link[dplyr]{select}}
-show_columns <- function(...) {
-  quoted_args <- rlang::quos(...)
-  condformat_api <- "0.6"
-  tryCatch({
-    possible_condformat <- quoted_args[[1]]
-    x <- rlang::eval_tidy(possible_condformat)
-    stopifnot(inherits(x, "condformat_tbl"))
-    condformat_api <- "0.7"
-  }, error = function(err) {
-    condformat_api <- "0.6"
-  })
-  if (condformat_api == "0.7") {
-    return(show_columns_new(...))
-  } else if (condformat_api == "0.6") {
-    return(show_columns_old(...))
-  } else {
-    stop("Unknown condformat API")
-  }
+show_columns <- function(x, columns, col_names, ...) {
+  return(api_dispatcher(show_columns_new, show_columns_old))
 }
 
-#' @rdname show_columns
 show_columns_new <- function(x, columns, col_names) {
+  if (!inherits(x, "condformat_tbl")) {
+    x <- condformat(x)
+  }
+
   columnsquo <- rlang::enquo(columns)
   helpers <- tidyselect::vars_select_helpers
   columnsquo_bur <- rlang::env_bury(columnsquo, !!! helpers)
@@ -71,7 +58,7 @@ show_columns_new <- function(x, columns, col_names) {
                                       "condformat_show_columns_select"))
   x2 <- x
   condformatopts <- attr(x2, "condformat")
-  condformatopts$show$cols <- c(condformatopts$show$cols, list(showobj))
+  condformatopts[[c("show", "cols")]] <- c(condformatopts[[c("show", "cols")]], list(showobj))
   attr(x2, "condformat") <- condformatopts
   return(x2)
 }
@@ -141,32 +128,32 @@ show_columns_ <- function(..., .dots, col_names) {
 }
 
 render_show.condformat_show_columns_select <- function(showobj, finalshow, x, ...) {
-  if (inherits(showobj$column_expr, "quosure")) {
-    columns <- tidyselect::vars_select(colnames(x), !!! showobj$column_expr)
-    if (!identical(showobj$col_names, NA)) {
-      names(columns) <- showobj$col_names
+  if (inherits(showobj[["column_expr"]], "quosure")) {
+    columns <- tidyselect::vars_select(colnames(x), !!! showobj[["column_expr"]])
+    if (!identical(showobj[["col_names"]], NA)) {
+      names(columns) <- showobj[["col_names"]]
     } else {
       names(columns) <- columns
     }
     # If a variable had already been excluded, do not show it:
-    columns <- columns[columns %in% finalshow$cols]
-    finalshow$cols <- columns
+    columns <- columns[columns %in% finalshow[["cols"]]]
+    finalshow[["cols"]] <- columns
     return(finalshow)
   } else {
     # Deprecated
     # col_to_show: The columns that this show_columns would keep:
-    col_to_show <- dplyr::select_vars_(colnames(x), showobj$column_expr) # D
+    col_to_show <- dplyr::select_vars_(colnames(x), showobj[["column_expr"]]) # D
 
     # Assign the names we want to use for those columns:
-    if (!identical(showobj$col_names, NA)) {
-      names(col_to_show) <- showobj$col_names
+    if (!identical(showobj[["col_names"]], NA)) {
+      names(col_to_show) <- showobj[["col_names"]]
     } else {
       names(col_to_show) <- col_to_show
     }
 
     # If a variable had already been excluded, do not show it:
-    col_to_show <- col_to_show[col_to_show %in% finalshow$cols]
-    finalshow$cols <- col_to_show
+    col_to_show <- col_to_show[col_to_show %in% finalshow[["cols"]]]
+    finalshow[["cols"]] <- col_to_show
     return(finalshow)
   }
 }

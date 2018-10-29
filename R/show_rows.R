@@ -15,42 +15,28 @@
 #' condformat(x) %>% show_rows(Sepal.Length > 4.5, Species == "setosa")
 #' # Use it programatically
 #' expr_as_text <- 'Sepal.Length > 4.5'
-#' expr <- rlang::parse_quosure(expr_as_text)
+#' expr <- rlang::parse_expr(expr_as_text)
 #' condformat(x) %>% show_rows(!! expr)
 #' # With multiple arguments:
 #' expr_as_text <- c('Sepal.Length > 4.5', 'Species == "setosa"')
-#' exprs <- lapply(expr_as_text, rlang::parse_quosure)
+#' exprs <- lapply(expr_as_text, rlang::parse_expr)
 #' condformat(x) %>% show_rows(!!! exprs)
 #' @export
 #' @seealso \code{\link[dplyr]{filter}}
-show_rows <- function(...) {
-  quoted_args <- rlang::quos(...)
-  condformat_api <- "0.6"
-  tryCatch({
-    possible_condformat <- quoted_args[[1]]
-    x <- rlang::eval_tidy(possible_condformat)
-    stopifnot(inherits(x, "condformat_tbl"))
-    condformat_api <- "0.7"
-  }, error = function(err) {
-    condformat_api <- "0.6"
-  })
-  if (condformat_api == "0.7") {
-    return(show_rows_new(...))
-  } else if (condformat_api == "0.6") {
-    return(show_rows_old(...))
-  } else {
-    stop("Unknown condformat API")
-  }
+show_rows <- function(x, ...) {
+  api_dispatcher(show_rows_new, show_rows_old)
 }
 
-#' @rdname show_rows
 show_rows_new <- function(x, ...) {
   expr <- rlang::quos(...)
   showobj <- structure(list(row_expr = expr),
                        class = c("condformat_show_rows", "condformat_show_rows_filter"))
   x2 <- x
+  if (!inherits(x2, "condformat_tbl")) {
+    x2 <- condformat(x2)
+  }
   condformatopts <- attr(x2, "condformat")
-  condformatopts$show$rows <- c(condformatopts$show$rows, list(showobj))
+  condformatopts[[c("show", "rows")]] <- c(condformatopts[[c("show", "rows")]], list(showobj))
   attr(x2, "condformat") <- condformatopts
   return(x2)
 }
@@ -94,14 +80,14 @@ show_rows_ <- function(..., .dots) {
 }
 
 render_show.condformat_show_rows_filter <- function(showobj, finalshow, x, ...) {
-  if (inherits(showobj$row_expr, "lazy_dots")) {
+  if (inherits(showobj[["row_expr"]], "lazy_dots")) {
     # Deprecated
-    xfiltered <- dplyr::filter_(x, .dots = showobj$row_expr) # D
-    finalshow$xfiltered <- xfiltered
+    xfiltered <- dplyr::filter_(x, .dots = showobj[["row_expr"]]) # D
+    finalshow[["xfiltered"]] <- xfiltered
     return(finalshow)
   } else {
-    xfiltered <- dplyr::filter(x, !!! showobj$row_expr)
-    finalshow$xfiltered <- xfiltered
+    xfiltered <- dplyr::filter(x, !!! showobj[["row_expr"]])
+    finalshow[["xfiltered"]] <- xfiltered
     return(finalshow)
   }
 }

@@ -7,11 +7,11 @@
 #' @param x A matrix or data.frame
 #'
 #' @return The condformat_tbl object. This object can be piped to apply
-#'         conditional formatting rules. It can also be used as a conventional
-#'         data frame.
+#'  conditional formatting rules. It can also be used as a conventional
+#'  data frame.
 #'
-#'         The condformat_tbl print method generates an htmlTable, to be
-#'         viewed using RStudio Viewer or an HTML browser, as available.
+#'  The condformat_tbl print method generates an htmlTable, to be
+#'  viewed using RStudio Viewer or an HTML browser, as available.
 #' @examples
 #' data(iris)
 #' condformat(iris[1:5,])
@@ -50,22 +50,22 @@ condformat <- function(x) {
   #Deprecated
   if (inherits(obj, "condformat_show_columns")) {
     condformatopts <- attr(x, "condformat")
-    condformatopts$show$cols <- c(condformatopts$show$cols, list(obj))
+    condformatopts[[c("show", "cols")]] <- c(condformatopts[[c("show", "cols")]], list(obj))
     attr(x, "condformat") <- condformatopts
     return(x)
   } else if (inherits(obj, "condformat_show_rows")) {
     condformatopts <- attr(x, "condformat")
-    condformatopts$show$rows <- c(condformatopts$show$rows, list(obj))
+    condformatopts[[c("show", "rows")]] <- c(condformatopts[[c("show", "rows")]], list(obj))
     attr(x, "condformat") <- condformatopts
     return(x)
   } else if (inherits(obj, "condformat_rule")) {
     condformatopts <- attr(x, "condformat")
-    condformatopts$rules <- c(condformatopts$rules, list(obj))
+    condformatopts[["rules"]] <- c(condformatopts[["rules"]], list(obj))
     attr(x, "condformat") <- condformatopts
     return(x)
   } else if (inherits(obj, "condformat_theme")) {
     condformatopts <- attr(x, "condformat")
-    condformatopts$themes <- c(condformatopts$themes, list(obj))
+    condformatopts[["themes"]] <- c(condformatopts[["themes"]], list(obj))
     attr(x, "condformat") <- condformatopts
     return(x)
   } else {

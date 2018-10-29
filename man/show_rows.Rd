@@ -2,21 +2,18 @@
 % Please edit documentation in R/show_rows.R
 \name{show_rows}
 \alias{show_rows}
-\alias{show_rows_new}
 \title{Selects the rows to be printed}
 \usage{
-show_rows(...)
-
-show_rows_new(x, ...)
+show_rows(x, ...)
 }
 \arguments{
-\item{...}{Expressions used for filtering}
-
 \item{x}{condformat_tbl object}
+
+\item{...}{Expressions used for filtering}
 }
 \value{
 A condformat_show_rows object, usually to be added to a condformat_tbl object
-        as shown in the examples
+as shown in the examples
 }
 \description{
 Keeps the rows you mention in the printed table.
@@ -30,11 +27,11 @@ x <- head(iris)
 condformat(x) \%>\% show_rows(Sepal.Length > 4.5, Species == "setosa")
 # Use it programatically
 expr_as_text <- 'Sepal.Length > 4.5'
-expr <- rlang::parse_quosure(expr_as_text)
+expr <- rlang::parse_expr(expr_as_text)
 condformat(x) \%>\% show_rows(!! expr)
 # With multiple arguments:
 expr_as_text <- c('Sepal.Length > 4.5', 'Species == "setosa"')
-exprs <- lapply(expr_as_text, rlang::parse_quosure)
+exprs <- lapply(expr_as_text, rlang::parse_expr)
 condformat(x) \%>\% show_rows(!!! exprs)
 }
 \seealso{

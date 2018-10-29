@@ -3,12 +3,12 @@
 #' Fills a column or columns of a data frame using a discrete
 #' colour palette, based on an expression.
 #'
-#' The syntax in condformat rules has changed since v0.7. See \code{\link{rule_fill_discrete_old}}
+#' The syntax in condformat rules has changed since v0.7. See [rule_fill_discrete_old()]
 #'
 #' @family rule
-#' @param x A condformat object, typically created with `condformat(x)`
+#' @param x A condformat object, typically created with [condformat()]
 #' @param columns A character vector with column names to be coloured. Optionally
-#'                `tidyselect::select_helpers` can be used.
+#'                [tidyselect::select_helpers()] can be used.
 #' @param expression an expression to be evaluated with the data.
 #'                   It should evaluate to a logical or an integer vector,
 #'                   that will be used to determine which cells are to be coloured.
@@ -17,7 +17,7 @@
 #' @inheritParams scales::hue_pal
 #' @param na.value a character string with the CSS color to be used in missing values
 #' @param lockcells logical value determining if no further rules should be applied to the affected cells.
-#' @param ... Dots are used to transition from the old syntax \code{\link{rule_fill_discrete_old}} to the new one
+#' @param ... Dots are used to transition from the old syntax [rule_fill_discrete_old()] to the new one
 #'
 #' @return The condformat_tbl object, with the added formatting information
 #' @examples
@@ -34,25 +34,12 @@
 #'                     expression = Sepal.Length > 4.6,
 #'                     colours=c("TRUE"="red"))
 #' @export
-rule_fill_discrete <- function(...) {
-  quoted_args <- rlang::quos(...)
-  condformat_api <- "0.6"
-  tryCatch({
-    possible_condformat <- quoted_args[[1]]
-    x <- rlang::eval_tidy(possible_condformat)
-    stopifnot(inherits(x, "condformat_tbl"))
-    condformat_api <- "0.7"
-  }, error = function(err) {
-    condformat_api <- "0.6"
-  })
-  if (condformat_api == "0.7") {
-    return(rule_fill_discrete_new(...))
-  } else if (condformat_api == "0.6") {
-    warning("This condformat syntax is deprecated. See ?rule_fill_discrete for more information")
-    return(rule_fill_discrete_old(...))
-  } else {
-    stop("Unknown condformat API")
-  }
+rule_fill_discrete <- function(x, columns, expression, colours = NA,
+                               na.value = "#FFFFFF",
+                               h = c(0, 360) + 15, c = 100, l = 65,
+                               h.start = 0, direction = 1,
+                               lockcells=FALSE, ...) {
+  return(api_dispatcher(rule_fill_discrete_new, rule_fill_discrete_old))
 }
 
 
@@ -112,12 +99,14 @@ rule_fill_discrete_old <- function(...,
   return(rule)
 }
 
-#' @rdname rule_fill_discrete
 rule_fill_discrete_new <- function(x, columns, expression, colours = NA,
                                    na.value = "#FFFFFF",
                                    h = c(0, 360) + 15, c = 100, l = 65,
                                    h.start = 0, direction = 1,
                                    lockcells=FALSE) {
+  if (!inherits(x, "condformat_tbl")) {
+    x <- condformat(x)
+  }
   columnsquo <- rlang::enquo(columns)
   helpers <- tidyselect::vars_select_helpers
   columnsquo_bur <- rlang::env_bury(columnsquo, !!! helpers)
@@ -209,74 +198,115 @@ rule_fill_discrete_ <- function(columns,
 
 
 
-applyrule.rule_fill_discrete <- function(rule, finalformat, xfiltered, xview, ...) {
-  if (inherits(rule$expression, "lazy")) {
+rule_to_cf_field.rule_fill_discrete <- function(rule, xfiltered, xview, ...) {
+  if (inherits(rule[["expression"]], "lazy")) {
     # Deprecated: Remove in future version
-    columns <- dplyr::select_vars_(colnames(xview), rule$columns) # D
-    values_determining_color <- as.factor(lazyeval::lazy_eval(rule$expression, data = xfiltered)) # D
+    columns <- dplyr::select_vars_(colnames(xview), rule[["columns"]]) # D
+    values_determining_color <- as.factor(lazyeval::lazy_eval(rule[["expression"]], data = xfiltered)) # D
     values_determining_color <- rep(values_determining_color, length.out = nrow(xfiltered))
-    rule_fill_discrete_common(rule, finalformat, xview, columns,
-                              values_determining_color)
+    r_f_d_to_cf_field_common(rule, xview, columns,
+                             values_determining_color)
   } else {
-    columns <- tidyselect::vars_select(colnames(xview), !!! rule$columns)
+    columns <- tidyselect::vars_select(colnames(xview), !!! rule[["columns"]])
     if (length(columns) == 0) {
-      return(finalformat)
+      return(NULL)
     }
-    if (rlang::quo_is_missing(rule$expression)) {
+    if (rlang::quo_is_missing(rule[["expression"]])) {
       if (length(columns) > 1) {
         warning("rule_fill_discrete applied to multiple columns, using column ",
                 columns[1], " values as expression. In the future this behaviour will change,",
                 "please use a explicit expression instead.",
                 call. = FALSE)
       }
-      rule$expression <- as.symbol(as.name(columns[1]))
+      rule[["expression"]] <- as.symbol(as.name(columns[1]))
     }
-    values_determining_color <- as.factor(rlang::eval_tidy(rule$expression, data = xfiltered))
+    values_determining_color <- as.factor(rlang::eval_tidy(rule[["expression"]], data = xfiltered))
     values_determining_color <- rep(values_determining_color, length.out = nrow(xfiltered))
-    rule_fill_discrete_common(rule, finalformat, xview, columns,
-                              values_determining_color)
+    r_f_d_to_cf_field_common(rule, xview, columns,
+                             values_determining_color)
   }
 }
 
-applyrule.rule_fill_discrete_ <- function(rule, finalformat, xfiltered, xview, ...) {
+rule_to_cf_field.rule_fill_discrete_ <- function(rule, xfiltered, xview, ...) {
   # Deprecated: Remove in future version
-  columns <- dplyr::select_vars_(colnames(xview), rule$columns) # D
-  if (!lazyeval::is_formula(rule$expression)) { # D
-    values_determining_color <- as.factor(rule$expression)
+  columns <- dplyr::select_vars_(colnames(xview), rule[["columns"]]) # D
+  if (!lazyeval::is_formula(rule[["expression"]])) { # D
+    values_determining_color <- as.factor(rule[["expression"]])
   } else {
-    values_determining_color <- as.factor(lazyeval::f_eval(f = rule$expression, data = xfiltered)) # D
+    values_determining_color <- as.factor(lazyeval::f_eval(f = rule[["expression"]], data = xfiltered)) # D
     values_determining_color <- rep(values_determining_color, length.out = nrow(xfiltered))
   }
-  rule_fill_discrete_common(rule, finalformat, xview, columns,
-                            values_determining_color)
+  r_f_d_to_cf_field_common(rule, xview, columns, values_determining_color)
 }
 
-rule_fill_discrete_common <- function(rule, finalformat, xview,
-                                      columns, values_determining_color) {
+r_f_d_to_cf_field_common <- function(rule, xview,
+                                     columns, values_determining_color) {
   colours_for_values <- NA
-  if (identical(rule$colours, NA)) {
+  if (identical(rule[["colours"]], NA)) {
     # colours not given: Create a palette
     number_colours <- length(unique(values_determining_color))
-    col_scale <- scales::hue_pal(h = rule$h, c = rule$c, l = rule$l,
-                                 h.start = rule$h.start,
-                                 direction = rule$direction)(number_colours)
+    col_scale <- scales::hue_pal(h = rule[["h"]], c = rule[["c"]], l = rule[["l"]],
+                                 h.start = rule[["h.start"]],
+                                 direction = rule[["direction"]])(number_colours)
     colours_for_values <- col_scale[as.integer(values_determining_color)]
-  } else if (is.character(rule$colours)) {
-    colours_for_values <- rule$colours[match(values_determining_color, names(rule$colours))]
-  } else if (is.function(rule$colours)) {
-    colours_for_values <- rule$colours(values_determining_color)
+  } else if (is.character(rule[["colours"]])) {
+    colours_for_values <- rule[["colours"]][match(values_determining_color, names(rule[["colours"]]))]
+  } else if (is.function(rule[["colours"]])) {
+    colours_for_values <- rule[["colours"]](values_determining_color)
     if (is.factor(colours_for_values)) {
       colours_for_values <- as.character(colours_for_values)
     }
   }
-  colours_for_values[is.na(colours_for_values)] <- rule$na.value
+  colours_for_values[is.na(colours_for_values)] <- rule[["na.value"]]
   stopifnot(identical(length(colours_for_values), nrow(xview)))
-  colours_for_values <- matrix(colours_for_values,
-                               nrow = nrow(xview), ncol = ncol(xview), byrow = FALSE)
-
-  finalformat <- fill_css_field_by_cols(finalformat,
-                                        "background-color", colours_for_values,
-                                        columns, xview, rule$lockcells)
-  return(finalformat)
+  colours_for_values_mat <- matrix(NA,
+                                   nrow = nrow(xview), ncol = ncol(xview),
+                                   byrow = FALSE)
+  colnames(colours_for_values_mat) <- colnames(xview)
+  colours_for_values_mat[, columns] <- colours_for_values
+  cf_field <- structure(list(css_key = "background-color",
+                             css_values = colours_for_values_mat,
+                             lock_cells = rule[["lockcells"]]),
+                        class = c("cf_field_rule_fill_solid",
+                                  "cf_field_css", "cf_field"))
+  return(cf_field)
 }
 
+# Used by rule_fill_discrete, rule_fill_gradient and rule_fill_gradient2 functions
+cf_field_to_latex.cf_field_rule_fill_solid <- function(cf_field, xview, unlocked) {
+  colours <- cf_field[["css_values"]]
+  to_lock <- !is.na(colours)
+  colours[is.na(colours) | !unlocked] <- ""
+  before <- colours
+  # Convert colors  to hex strings:
+  # c("green", "yellow", "#00FF00") to c("0000FF", "FFFF00", "00FF00")
+  # leaving empty strings aside
+  before[nchar(before) > 0] <- apply(
+    grDevices::col2rgb(before[nchar(before) > 0]),
+    MARGIN = 2,
+    function(x) sprintf("\\cellcolor[HTML]{%02X%02X%02X}", x[1],x[2],x[3]))
+  after <- matrix("", nrow = nrow(colours), ncol = ncol(colours))
+  if (cf_field[["lock_cells"]]) {
+    unlocked <- unlocked | to_lock
+  }
+  list(before = before, after = after, unlocked = unlocked)
+}
+
+# Used by rule_fill_discrete, rule_fill_gradient and rule_fill_gradient2 functions
+cf_field_to_gtable.cf_field_rule_fill_solid <- function(cf_field, xview, gridobj, unlocked, has_rownames, has_colnames) {
+  colours <- cf_field[["css_values"]]
+  to_lock <- !is.na(colours)
+  colours[is.na(colours) | !unlocked] <- ""
+
+  row_col <- which(nchar(colours) > 0, arr.ind = TRUE)
+  for (tocolor in seq_len(nrow(row_col))) {
+    ind <- find_cell(gridobj,
+                     as.integer(has_colnames) + row_col[tocolor, 1],
+                     as.integer(has_rownames) + row_col[tocolor, 2],
+                     name = "core-bg")
+    fill <- grDevices::col2rgb(colours[row_col[tocolor, 1], row_col[tocolor, 2]])
+    fill <- sprintf("#%02X%02X%02X", fill[1], fill[2], fill[3])
+    gridobj$grobs[ind][[1]][["gp"]] <- grid::gpar(fill = fill)
+  }
+  list(gridobj = gridobj, unlocked = unlocked)
+}
