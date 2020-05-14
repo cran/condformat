@@ -7,7 +7,7 @@
 #'
 #' @param x A condformat object, typically created with [condformat()]
 #' @param columns A character vector with column names to be coloured. Optionally
-#'                [tidyselect::select_helpers()] can be used.
+#'                [tidyselect::language()] can be used.
 #' @param expression an expression to be evaluated with the data.
 #'                   It should evaluate to a numeric vector,
 #'                   that will be used to determine the colour gradient level.
@@ -21,7 +21,10 @@
 #' @return The condformat_tbl object, with the added formatting information
 #' @examples
 #' data(iris)
-#' condformat(iris[c(1:5, 70:75, 120:125), ]) %>% rule_fill_bar("Sepal.Length")
+#' cf <- condformat(iris[c(1:5, 70:75, 120:125), ]) %>% rule_fill_bar("Sepal.Length")
+#' \dontrun{
+#' print(cf)
+#' }
 #' @export
 rule_fill_bar <- function(x, columns, expression,
                           low = "darkgreen",
@@ -53,7 +56,7 @@ rule_fill_bar <- function(x, columns, expression,
 
 #' @importFrom scales rescale
 rule_to_cf_field.rule_fill_bar <- function(rule, xfiltered, xview, ...) {
-  columns <- tidyselect::vars_select(colnames(xview), !!! rule[["columns"]])
+  columns <- do.call(tidyselect::vars_select, c(list(colnames(xview)), rule[["columns"]]))
   if (length(columns) == 0) {
     return(NULL)
   }

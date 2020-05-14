@@ -4,14 +4,13 @@
 \alias{rule_text_bold}
 \title{Use bold text if a condition is met}
 \usage{
-rule_text_bold(x, columns, expression, na.bold = FALSE,
-  lockcells = FALSE)
+rule_text_bold(x, columns, expression, na.bold = FALSE, lockcells = FALSE)
 }
 \arguments{
 \item{x}{A condformat object, typically created with \code{\link[=condformat]{condformat()}}}
 
 \item{columns}{A character vector with column names to be coloured. Optionally
-\code{\link[tidyselect:select_helpers]{tidyselect::select_helpers()}} can be used.}
+\code{\link[tidyselect:language]{tidyselect::language()}} can be used.}
 
 \item{expression}{Condition that evaluates to \code{TRUE} for the rows where bold text should be applied.}
 
@@ -24,15 +23,19 @@ Use bold text if a condition is met
 }
 \examples{
 data(iris)
-condformat(iris[c(1:5, 51:55, 101:105),]) \%>\%
+cf <- condformat(iris[c(1:5, 51:55, 101:105),]) \%>\%
   rule_text_bold(Species, expression = Species == "setosa")
+\dontrun{
+print(cf)
+}
 }
 \seealso{
-Other rule: \code{\link{rule_css}},
-  \code{\link{rule_fill_bar}},
-  \code{\link{rule_fill_discrete}},
-  \code{\link{rule_fill_gradient2}},
-  \code{\link{rule_fill_gradient}},
-  \code{\link{rule_text_color}}
+Other rule: 
+\code{\link{rule_css}()},
+\code{\link{rule_fill_bar}()},
+\code{\link{rule_fill_discrete}()},
+\code{\link{rule_fill_gradient2}()},
+\code{\link{rule_fill_gradient}()},
+\code{\link{rule_text_color}()}
 }
 \concept{rule}

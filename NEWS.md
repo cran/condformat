@@ -1,3 +1,27 @@
+# condformat 0.9.0
+
+## Breaking changes
+
+* The lazyeval API deprecated on condformat 0.6 has been dropped, only the tidy evaluation
+  API remains. This fixes dplyr 1.0.0 test failures.
+
+## New features
+
+* Excel output supports rule_text_bold and rule_text_color
+
+# Deprecation
+
+* space is ignored and deprecated in rule_fill_gradient and rule_fill_gradient2,
+  following recent changes in the scales package. Please remove it if you are
+  using it, as it will be removed in a future version
+
+## Other
+
+* Replace xlsx with openxlsx. This avoids pulling RJava as a suggested dependency
+* Warn if unsupported rule is used with Excel output
+* Fix warning due to rlang update
+* Change examples and tests so they don't open browser windows
+
 # condformat 0.8.0
 
 ## New features:
@@ -15,7 +39,7 @@
 
 * Deprecate: `theme_htmlTable` now only accepts arguments to be passed to
   `htmlTable::htmlTable`. Before, it could also be used to accept 
-  `number_of_entries`, `width`, `height`... to customize the widget appearence.
+  `number_of_entries`, `width`, `height`... to customize the widget appearance.
   For that use case, please use `theme_htmlWidget` instead.
 * Deprecate: `condformat2widget` will not accept arguments to customize the
   appearance of the widget. Use `theme_htmlWidget` instead.

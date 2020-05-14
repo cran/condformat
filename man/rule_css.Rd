@@ -4,14 +4,13 @@
 \alias{rule_css}
 \title{Apply a CSS style property as a conditional formatting rule}
 \usage{
-rule_css(x, columns, expression, css_field, na.value = "",
-  lockcells = FALSE)
+rule_css(x, columns, expression, css_field, na.value = "", lockcells = FALSE)
 }
 \arguments{
 \item{x}{A condformat object, typically created with \code{\link[=condformat]{condformat()}}}
 
 \item{columns}{A character vector with column names to be coloured. Optionally
-\code{\link[tidyselect:select_helpers]{tidyselect::select_helpers()}} can be used.}
+\code{\link[tidyselect:language]{tidyselect::language()}} can be used.}
 
 \item{expression}{This expression should evaluate to an array of the values}
 
@@ -26,16 +25,20 @@ Apply a CSS style property as a conditional formatting rule
 }
 \examples{
 data(iris)
-condformat(iris[c(1:5, 51:55, 101:105),]) \%>\%
+cf <- condformat(iris[c(1:5, 51:55, 101:105),]) \%>\%
   rule_css(Species, expression = ifelse(Species == "setosa", "red", "darkgreen"),
            css_field = "color")
+\dontrun{
+print(cf)
+}
 }
 \seealso{
-Other rule: \code{\link{rule_fill_bar}},
-  \code{\link{rule_fill_discrete}},
-  \code{\link{rule_fill_gradient2}},
-  \code{\link{rule_fill_gradient}},
-  \code{\link{rule_text_bold}},
-  \code{\link{rule_text_color}}
+Other rule: 
+\code{\link{rule_fill_bar}()},
+\code{\link{rule_fill_discrete}()},
+\code{\link{rule_fill_gradient2}()},
+\code{\link{rule_fill_gradient}()},
+\code{\link{rule_text_bold}()},
+\code{\link{rule_text_color}()}
 }
 \concept{rule}

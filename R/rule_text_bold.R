@@ -6,8 +6,11 @@
 #' @param na.bold If `TRUE`, make missing values bold.
 #' @examples
 #' data(iris)
-#' condformat(iris[c(1:5, 51:55, 101:105),]) %>%
+#' cf <- condformat(iris[c(1:5, 51:55, 101:105),]) %>%
 #'   rule_text_bold(Species, expression = Species == "setosa")
+#' \dontrun{
+#' print(cf)
+#' }
 #' @export
 rule_text_bold <- function(x, columns, expression,
                            na.bold = FALSE,
@@ -29,7 +32,7 @@ rule_text_bold <- function(x, columns, expression,
 }
 
 rule_to_cf_field.rule_text_bold <- function(rule, xfiltered, xview, ...) {
-  columns <- tidyselect::vars_select(colnames(xview), !!! rule[["columns"]])
+  columns <- do.call(tidyselect::vars_select, c(list(colnames(xview)), rule[["columns"]]))
   if (length(columns) == 0) {
     return(NULL)
   }

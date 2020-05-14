@@ -4,16 +4,25 @@
 \alias{rule_fill_gradient2}
 \title{Fill column with sequential color gradient}
 \usage{
-rule_fill_gradient2(x, columns, expression, low = scales::muted("red"),
-  mid = "white", high = scales::muted("blue"), midpoint = NA,
-  space = "Lab", na.value = "#7F7F7F", limits = NA,
-  lockcells = FALSE, ...)
+rule_fill_gradient2(
+  x,
+  columns,
+  expression,
+  low = scales::muted("red"),
+  mid = "white",
+  high = scales::muted("blue"),
+  midpoint = NA,
+  space = "Lab",
+  na.value = "#7F7F7F",
+  limits = NA,
+  lockcells = FALSE
+)
 }
 \arguments{
 \item{x}{A condformat object, typically created with \code{\link[=condformat]{condformat()}}}
 
 \item{columns}{A character vector with column names to be colored. Optionally
-\code{\link[tidyselect:select_helpers]{tidyselect::select_helpers()}} can be used.}
+\code{\link[tidyselect:language]{tidyselect::language()}} can be used.}
 
 \item{expression}{an expression to be evaluated with the data.
 It should evaluate to a logical or an integer vector,
@@ -35,8 +44,6 @@ other values are deprecated.}
 \item{limits}{range of limits that the gradient should cover}
 
 \item{lockcells}{logical value determining if no further rules should be applied to the affected cells.}
-
-\item{...}{Dots are used to transition from the old syntax \code{\link[=rule_fill_discrete_old]{rule_fill_discrete_old()}} to the new one}
 }
 \value{
 The condformat_tbl object, with the added formatting information
@@ -45,26 +52,30 @@ The condformat_tbl object, with the added formatting information
 Fills the background color of a column using a gradient based on
 the values given by an expression
 }
-\details{
-The syntax in condformat rules has changed since v0.7. See \code{\link[=rule_fill_gradient_old]{rule_fill_gradient_old()}}
-}
 \examples{
 data(iris)
-condformat(iris[c(1:5, 70:75, 120:125), ]) \%>\%
+cf <- condformat(iris[c(1:5, 70:75, 120:125), ]) \%>\%
  rule_fill_gradient2(Sepal.Length) \%>\%
  rule_fill_gradient2(Species, expression=Sepal.Length - Sepal.Width)
+\dontrun{
+print(cf)
+}
 
-condformat(iris[c(1:5, 70:75, 120:125), ]) \%>\%
+cf <- condformat(iris[c(1:5, 70:75, 120:125), ]) \%>\%
   rule_fill_gradient2("Petal.Length") \%>\%
   rule_fill_gradient2(starts_with("Sepal"), expression=Sepal.Length - Sepal.Width)
+\dontrun{
+print(cf)
+}
 
 }
 \seealso{
-Other rule: \code{\link{rule_css}},
-  \code{\link{rule_fill_bar}},
-  \code{\link{rule_fill_discrete}},
-  \code{\link{rule_fill_gradient}},
-  \code{\link{rule_text_bold}},
-  \code{\link{rule_text_color}}
+Other rule: 
+\code{\link{rule_css}()},
+\code{\link{rule_fill_bar}()},
+\code{\link{rule_fill_discrete}()},
+\code{\link{rule_fill_gradient}()},
+\code{\link{rule_text_bold}()},
+\code{\link{rule_text_color}()}
 }
 \concept{rule}

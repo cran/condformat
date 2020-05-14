@@ -14,12 +14,21 @@
 #'  viewed using RStudio Viewer or an HTML browser, as available.
 #' @examples
 #' data(iris)
-#' condformat(iris[1:5,])
+#' cf <- condformat(iris[1:5,])
+#' \dontrun{
+#' print(cf)
+#' }
 #'
-#' condformat(iris[1:5,]) %>% rule_fill_gradient(Sepal.Length)
+#' cf <- condformat(iris[1:5,]) %>% rule_fill_gradient(Sepal.Length)
+#' \dontrun{
+#' print(cf)
+#' }
 #'
-#' condformat(iris[1:5,]) %>%
+#' cf <- condformat(iris[1:5,]) %>%
 #'  rule_fill_discrete(Sepal.Length, expression=Sepal.Width > 2)
+#' \dontrun{
+#' print(cf)
+#' }
 #' @export
 condformat <- function(x) {
   x <- tibble::as_tibble(x)
@@ -32,52 +41,3 @@ condformat <- function(x) {
   return(x)
 }
 
-
-#' Combines data with formatting rules (deprecated)
-#'
-#' This is deprecated
-#'
-#' @param x A condformat_tbl object
-#' @param obj A condformat_show or a condformat_rule object to be combined
-#'            Any other type of object will be added as expected to the data frame.
-#' @return x, with extended condformat_tbl attributes
-#' @examples
-#' data(iris)
-#' condformat(iris[1:5,]) + show_columns(Species)
-#' @method + condformat_tbl
-#' @export
-"+.condformat_tbl" <- function(x, obj) {
-  #Deprecated
-  if (inherits(obj, "condformat_show_columns")) {
-    condformatopts <- attr(x, "condformat")
-    condformatopts[[c("show", "cols")]] <- c(condformatopts[[c("show", "cols")]], list(obj))
-    attr(x, "condformat") <- condformatopts
-    return(x)
-  } else if (inherits(obj, "condformat_show_rows")) {
-    condformatopts <- attr(x, "condformat")
-    condformatopts[[c("show", "rows")]] <- c(condformatopts[[c("show", "rows")]], list(obj))
-    attr(x, "condformat") <- condformatopts
-    return(x)
-  } else if (inherits(obj, "condformat_rule")) {
-    condformatopts <- attr(x, "condformat")
-    condformatopts[["rules"]] <- c(condformatopts[["rules"]], list(obj))
-    attr(x, "condformat") <- condformatopts
-    return(x)
-  } else if (inherits(obj, "condformat_theme")) {
-    condformatopts <- attr(x, "condformat")
-    condformatopts[["themes"]] <- c(condformatopts[["themes"]], list(obj))
-    attr(x, "condformat") <- condformatopts
-    return(x)
-  } else {
-    NextMethod()
-  }
-}
-
-# Deprecated
-#' @importFrom lazyeval uq
-#' @export
-lazyeval::uq # D
-
-#' @importFrom magrittr %>%
-#' @export
-magrittr::`%>%`

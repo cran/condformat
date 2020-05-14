@@ -4,14 +4,13 @@
 \alias{rule_text_color}
 \title{Give a color to the text according to some expression}
 \usage{
-rule_text_color(x, columns, expression, na.color = "",
-  lockcells = FALSE)
+rule_text_color(x, columns, expression, na.color = "", lockcells = FALSE)
 }
 \arguments{
 \item{x}{A condformat object, typically created with \code{\link[=condformat]{condformat()}}}
 
 \item{columns}{A character vector with column names to be coloured. Optionally
-\code{\link[tidyselect:select_helpers]{tidyselect::select_helpers()}} can be used.}
+\code{\link[tidyselect:language]{tidyselect::language()}} can be used.}
 
 \item{expression}{Condition that evaluates to color names for the rows where text should be colored}
 
@@ -24,15 +23,19 @@ Give a color to the text according to some expression
 }
 \examples{
 data(iris)
-condformat(iris[c(1:5, 51:55, 101:105),]) \%>\%
+cf <- condformat(iris[c(1:5, 51:55, 101:105),]) \%>\%
   rule_text_color(Species, expression = ifelse(Species == "setosa", "blue", ""))
+\dontrun{
+print(cf)
+}
 }
 \seealso{
-Other rule: \code{\link{rule_css}},
-  \code{\link{rule_fill_bar}},
-  \code{\link{rule_fill_discrete}},
-  \code{\link{rule_fill_gradient2}},
-  \code{\link{rule_fill_gradient}},
-  \code{\link{rule_text_bold}}
+Other rule: 
+\code{\link{rule_css}()},
+\code{\link{rule_fill_bar}()},
+\code{\link{rule_fill_discrete}()},
+\code{\link{rule_fill_gradient2}()},
+\code{\link{rule_fill_gradient}()},
+\code{\link{rule_text_bold}()}
 }
 \concept{rule}

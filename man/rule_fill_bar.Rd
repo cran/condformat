@@ -4,15 +4,23 @@
 \alias{rule_fill_bar}
 \title{Fill column with a bar of a length proportional to a value}
 \usage{
-rule_fill_bar(x, columns, expression, low = "darkgreen",
-  high = "white", background = "white", na.value = "gray",
-  limits = NA, lockcells = FALSE)
+rule_fill_bar(
+  x,
+  columns,
+  expression,
+  low = "darkgreen",
+  high = "white",
+  background = "white",
+  na.value = "gray",
+  limits = NA,
+  lockcells = FALSE
+)
 }
 \arguments{
 \item{x}{A condformat object, typically created with \code{\link[=condformat]{condformat()}}}
 
 \item{columns}{A character vector with column names to be coloured. Optionally
-\code{\link[tidyselect:select_helpers]{tidyselect::select_helpers()}} can be used.}
+\code{\link[tidyselect:language]{tidyselect::language()}} can be used.}
 
 \item{expression}{an expression to be evaluated with the data.
 It should evaluate to a numeric vector,
@@ -39,14 +47,18 @@ of the cell
 }
 \examples{
 data(iris)
-condformat(iris[c(1:5, 70:75, 120:125), ]) \%>\% rule_fill_bar("Sepal.Length")
+cf <- condformat(iris[c(1:5, 70:75, 120:125), ]) \%>\% rule_fill_bar("Sepal.Length")
+\dontrun{
+print(cf)
+}
 }
 \seealso{
-Other rule: \code{\link{rule_css}},
-  \code{\link{rule_fill_discrete}},
-  \code{\link{rule_fill_gradient2}},
-  \code{\link{rule_fill_gradient}},
-  \code{\link{rule_text_bold}},
-  \code{\link{rule_text_color}}
+Other rule: 
+\code{\link{rule_css}()},
+\code{\link{rule_fill_discrete}()},
+\code{\link{rule_fill_gradient2}()},
+\code{\link{rule_fill_gradient}()},
+\code{\link{rule_text_bold}()},
+\code{\link{rule_text_color}()}
 }
 \concept{rule}

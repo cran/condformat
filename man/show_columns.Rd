@@ -4,7 +4,7 @@
 \alias{show_columns}
 \title{Selects the variables to be printed}
 \usage{
-show_columns(x, columns, col_names, ...)
+show_columns(x, columns, col_names)
 }
 \arguments{
 \item{x}{A condformat object, typically created with \code{\link[=condformat]{condformat()}}}
@@ -13,8 +13,6 @@ show_columns(x, columns, col_names, ...)
 can be used that will be parsed like in \code{\link[tidyselect:vars_select]{tidyselect::vars_select()}}. See examples.}
 
 \item{col_names}{Character vector with the column names for the selected columns}
-
-\item{...}{Dots are used to transition from the old syntax \code{\link[=show_columns_old]{show_columns_old()}} to the new one}
 }
 \value{
 The condformat object with the rule added
@@ -31,21 +29,39 @@ data(iris)
 x <- head(iris)
 
 # Include some columns:
-condformat(x) \%>\% show_columns(c(Sepal.Length, Sepal.Width, Species))
-condformat(x) \%>\% show_columns(c("Sepal.Length", "Sepal.Width", "Species"))
+cf <- condformat(x) \%>\% show_columns(c(Sepal.Length, Sepal.Width, Species))
+\dontrun{
+print(cf)
+}
+cf <- condformat(x) \%>\% show_columns(c("Sepal.Length", "Sepal.Width", "Species"))
+\dontrun{
+print(cf)
+}
 
 # Rename columns:
-condformat(x) \%>\%
+cf <- condformat(x) \%>\%
   show_columns(c(Sepal.Length, Species),
                col_names = c("Length", "Spec."))
+\dontrun{
+print(cf)
+}
 
 # Exclude some columns:
-condformat(x) \%>\% show_columns(c(-Petal.Length, -Petal.Width))
+cf <- condformat(x) \%>\% show_columns(c(-Petal.Length, -Petal.Width))
+\dontrun{
+print(cf)
+}
 
-condformat(x) \%>\% show_columns(c(starts_with("Petal"), Species))
+cf <- condformat(x) \%>\% show_columns(c(starts_with("Petal"), Species))
+\dontrun{
+print(cf)
+}
 
 petal_width <- "Petal.Width"
-condformat(x) \%>\% show_columns(!! petal_width)
+cf <- condformat(x) \%>\% show_columns(!! petal_width)
+\dontrun{
+print(cf)
+}
 
 }
 \seealso{
