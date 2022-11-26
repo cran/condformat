@@ -1,15 +1,20 @@
 #' Converts the table to a grid object
 #'
 #' @param x A condformat_tbl object
+#' @param draw A logical. If `TRUE` (default), the table is 
+#' immediately drawn using `grid::draw()` and the grob is returned. 
+#' If `FALSE`, the grob is returned without drawing. Set `draw=FALSE`
+#' when using the grob in composite images with [gridExtra::grid.arrange()] or
+#' `ggpubr::ggarrange()`.
 #' @return the grid object
 #' @examples
 #' library(condformat)
 #' data.frame(Student = c("Alice", "Bob", "Charlie"),
 #'            Evaluation = c("Great", "Well done", "Good job!")) %>%
-#'  condformat %>%
-#'  condformat2grob
+#'  condformat() %>%
+#'  condformat2grob()
 #' @export
-condformat2grob <- function(x) {
+condformat2grob <- function(x, draw=TRUE) {
   xv_cf <- get_xview_and_cf_fields(x)
   xview <- xv_cf[["xview"]]
   cf_fields <- xv_cf[["cf_fields"]]
@@ -18,15 +23,19 @@ condformat2grob <- function(x) {
   finaltheme <- render_theme_condformat_tbl(themes, xview)
   tableGrobArgs <- finaltheme[["tableGrobArgs"]]
 
-  gridobj <- do.call(gridExtra::tableGrob,
-                     c(list(d = xview,
-                            cols = final_colnames),
-                       tableGrobArgs))
+  gridobj <- rlang::exec(
+    gridExtra::tableGrob,
+    d = xview,
+    cols = final_colnames,
+    !!!tableGrobArgs
+  )
   has_rownames <- !("rows" %in% names(tableGrobArgs) && is.null(tableGrobArgs[["rows"]]))
   has_colnames <- !is.null(final_colnames)
   gridobj <- render_cf_fields_to_grob(cf_fields, xview, gridobj, has_rownames, has_colnames)
-  grid::grid.newpage()
-  grid::grid.draw(gridobj)
+  if(draw==TRUE){
+    grid::grid.newpage()
+    grid::grid.draw(gridobj)
+  }
   invisible(gridobj)
 }
 

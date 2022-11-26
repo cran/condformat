@@ -1,3 +1,17 @@
+# condformat 0.10.0
+
+## New features
+
+* `condformat2grob()` function takes an optional `draw=TRUE` parameter which
+  controls whether the grob is immediately drawn during the function call.
+  `draw=FALSE` allows easier use in composite figures with
+  `gridExtra::grid.arrange()` or `ggpubr::ggarrange()` (@interzoneboy, #31)
+
+## Other
+
+* Replace `tidyselect::vars_select()` (questioning) with `tidyselect::eval_select()`
+* Avoid drawing plots on tests, use vdiffr instead.
+
 # condformat 0.9.0
 
 ## Breaking changes
@@ -9,7 +23,7 @@
 
 * Excel output supports rule_text_bold and rule_text_color
 
-# Deprecation
+## Deprecation
 
 * space is ignored and deprecated in rule_fill_gradient and rule_fill_gradient2,
   following recent changes in the scales package. Please remove it if you are

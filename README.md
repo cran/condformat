@@ -1,23 +1,31 @@
 Introduction to condformat
 ================
 Sergio Oller
-2020-05-14
+2022-11-26
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 condformat renders a data frame in which cells in columns are formatted
-according to several rules or
-criteria.
+according to several rules or criteria.
 
+<!-- badges: start -->
+
+[![CRAN
+status](https://www.r-pkg.org/badges/version/condformat)](https://CRAN.R-project.org/package=condformat)
 [![Downloads](https://cranlogs.r-pkg.org/badges/condformat)](https://cran.r-project.org/package=condformat)
-[![Build
-Status](https://travis-ci.org/zeehio/condformat.svg?branch=master)](https://travis-ci.org/zeehio/condformat)
-[![codecov.io](https://codecov.io/github/zeehio/condformat/coverage.svg?branch=master)](https://codecov.io/github/zeehio/condformat)
+
+[![Documentation](https://img.shields.io/badge/documentation-pkgdown-informational)](https://condformat.sergioller.com/)
+
+[![R build
+status](https://github.com/zeehio/condformat/workflows/R-CMD-check/badge.svg)](https://github.com/zeehio/condformat/actions)
+[![codecov.io](https://codecov.io/github/zeehio/condformat/coverage.svg?branch=main)](https://codecov.io/github/zeehio/condformat)
+
+<!-- badges: end -->
 
 ## Browse source code
 
 Checkout the code and browse it at
-<http://github.com/zeehio/condformat>.
+<https://github.com/zeehio/condformat>.
 
 ## How to install condformat:
 
@@ -29,13 +37,13 @@ package. Either use the full texlive distribution, or install
 
 ### Package installation
 
-  - From CRAN:
-    
-        install.packages("condformat")
+- From CRAN:
 
-  - To install the latest development version:
-    
-        devtools::install_github("zeehio/condformat")
+      install.packages("condformat")
+
+- To install the latest development version:
+
+      remotes::install_github("zeehio/condformat")
 
 ## Example
 
@@ -63,7 +71,7 @@ This example covers most of the condformat rules.
 ## Rules and output engine support
 
 | Rule                  | HTML | LaTeX | gtable | Excel |
-| --------------------- | :--: | :---: | :----: | :---: |
+|-----------------------|:----:|:-----:|:------:|:-----:|
 | `rule_fill_discrete`  |  X   |   X   |   X    |   X   |
 | `rule_fill_gradient`  |  X   |   X   |   X    |   X   |
 | `rule_fill_gradient2` |  X   |   X   |   X    |   X   |
