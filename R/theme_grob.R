@@ -4,14 +4,15 @@
 #'
 #' @param x The condformat object
 #' @param ... Arguments to be passed to gridExtra::tableGrob (see examples)
-#' @seealso \code{\link[gridExtra]{tableGrob}}
+#' @seealso [gridExtra::tableGrob()]
 #' @examples
 #' data(iris)
 #' cf <- condformat(head(iris)) %>%
-#'   theme_grob(base_size = 10, base_colour = "red")
-#' \dontrun{
-#' print(cf)
-#' }
+#'   theme_grob(
+#'     rows = NULL,
+#'     theme = gridExtra::ttheme_default(base_size = 10, base_colour = "red")
+#'   )
+#' condformat2grob(cf)
 #' @export
 theme_grob <- function(x, ...) {
   if (!inherits(x, "condformat_tbl")) {

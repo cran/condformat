@@ -12,7 +12,7 @@
 
 <meta name="author" content="Sergio Oller" />
 
-<meta name="date" content="2022-11-26" />
+<meta name="date" content="2023-10-08" />
 
 <title>Introduction to condformat</title>
 
@@ -340,7 +340,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Introduction to condformat</h1>
 <h4 class="author">Sergio Oller</h4>
-<h4 class="date">2022-11-26</h4>
+<h4 class="date">2023-10-08</h4>
 
 
 
@@ -361,17 +361,17 @@ evaluation.</p>
 </div>
 <div id="example" class="section level2">
 <h2>Example:</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(iris)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(condformat)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">condformat</span>(iris[<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">70</span><span class="sc">:</span><span class="dv">75</span>, <span class="dv">120</span><span class="sc">:</span><span class="dv">125</span>),]) <span class="sc">%&gt;%</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rule_fill_discrete</span>(Species) <span class="sc">%&gt;%</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rule_fill_discrete</span>(<span class="fu">c</span>(Sepal.Width, Sepal.Length),</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">expression =</span> Sepal.Width <span class="sc">&gt;</span> Sepal.Length <span class="sc">-</span> <span class="fl">2.25</span>,</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">colours =</span> <span class="fu">c</span>(<span class="st">&quot;TRUE&quot;</span> <span class="ot">=</span> <span class="st">&quot;#7D00FF&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rule_fill_gradient2</span>(Petal.Length) <span class="sc">%&gt;%</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rule_text_bold</span>(Sepal.Length, Species <span class="sc">==</span> <span class="st">&quot;setosa&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rule_text_color</span>(Sepal.Length, <span class="fu">ifelse</span>(Species <span class="sc">==</span> <span class="st">&quot;setosa&quot;</span>, <span class="st">&quot;yellow&quot;</span>, <span class="st">&quot;&quot;</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rule_fill_bar</span>(Petal.Width, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="cn">NA</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">data</span>(iris)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">library</span>(condformat)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="fu">condformat</span>(iris[<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">70</span><span class="sc">:</span><span class="dv">75</span>, <span class="dv">120</span><span class="sc">:</span><span class="dv">125</span>),]) <span class="sc">%&gt;%</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="fu">rule_fill_discrete</span>(Species) <span class="sc">%&gt;%</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="fu">rule_fill_discrete</span>(<span class="fu">c</span>(Sepal.Width, Sepal.Length),</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>                     <span class="at">expression =</span> Sepal.Width <span class="sc">&gt;</span> Sepal.Length <span class="sc">-</span> <span class="fl">2.25</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>                     <span class="at">colours =</span> <span class="fu">c</span>(<span class="st">&quot;TRUE&quot;</span> <span class="ot">=</span> <span class="st">&quot;#7D00FF&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>  <span class="fu">rule_fill_gradient2</span>(Petal.Length) <span class="sc">%&gt;%</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>  <span class="fu">rule_text_bold</span>(Sepal.Length, Species <span class="sc">==</span> <span class="st">&quot;setosa&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>  <span class="fu">rule_text_color</span>(Sepal.Length, <span class="fu">ifelse</span>(Species <span class="sc">==</span> <span class="st">&quot;setosa&quot;</span>, <span class="st">&quot;yellow&quot;</span>, <span class="st">&quot;&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>  <span class="fu">rule_fill_bar</span>(Petal.Width, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="cn">NA</span>))</span></code></pre></div>
 <table class="gmisc_table" style="border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;">
 <thead>
 <tr>

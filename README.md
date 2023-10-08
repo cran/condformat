@@ -1,7 +1,7 @@
 Introduction to condformat
 ================
 Sergio Oller
-2022-11-26
+2023-10-08
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -14,11 +14,11 @@ according to several rules or criteria.
 status](https://www.r-pkg.org/badges/version/condformat)](https://CRAN.R-project.org/package=condformat)
 [![Downloads](https://cranlogs.r-pkg.org/badges/condformat)](https://cran.r-project.org/package=condformat)
 
-[![Documentation](https://img.shields.io/badge/documentation-pkgdown-informational)](https://condformat.sergioller.com/)
+[![Documentation](https://img.shields.io/badge/documentation-pkgdown-informational)](https://zeehio.github.io/condformat/)
 
 [![R build
 status](https://github.com/zeehio/condformat/workflows/R-CMD-check/badge.svg)](https://github.com/zeehio/condformat/actions)
-[![codecov.io](https://codecov.io/github/zeehio/condformat/coverage.svg?branch=main)](https://codecov.io/github/zeehio/condformat)
+[![codecov.io](https://codecov.io/github/zeehio/condformat/coverage.svg?branch=main)](https://app.codecov.io/github/zeehio/condformat)
 
 <!-- badges: end -->
 
@@ -37,13 +37,13 @@ package. Either use the full texlive distribution, or install
 
 ### Package installation
 
-- From CRAN:
+  - From CRAN:
+    
+        install.packages("condformat")
 
-      install.packages("condformat")
-
-- To install the latest development version:
-
-      remotes::install_github("zeehio/condformat")
+  - To install the latest development version:
+    
+        remotes::install_github("zeehio/condformat")
 
 ## Example
 
@@ -71,7 +71,7 @@ This example covers most of the condformat rules.
 ## Rules and output engine support
 
 | Rule                  | HTML | LaTeX | gtable | Excel |
-|-----------------------|:----:|:-----:|:------:|:-----:|
+| --------------------- | :--: | :---: | :----: | :---: |
 | `rule_fill_discrete`  |  X   |   X   |   X    |   X   |
 | `rule_fill_gradient`  |  X   |   X   |   X    |   X   |
 | `rule_fill_gradient2` |  X   |   X   |   X    |   X   |
